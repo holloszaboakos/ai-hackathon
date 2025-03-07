@@ -51,12 +51,10 @@ def on_open(ws):
 # from JSON
 def on_message(ws, message):
     data = json.loads(message)
-    event_type = data.get("type", "Unknown")
-    if(event_type == "response.audio_transcript.delta"):
-        text = data['delta']
-        print(text)
+    if(data.get('type') == "response.audio_transcript.delta") and 'delta' in data:
+        transcript_to_send = {"type":"text", "data":data['delta']}
     if data.get('type') == 'response.audio.delta' and 'delta' in data:
-        audio_payload = data['delta']
+        audio_to_send = {"type":"audio", "data":data['delta']}
 
 
 ws = websocket.WebSocketApp(
