@@ -1,4 +1,4 @@
 selenium
 anthropic
 requests
-webdriver_manager
+webdriver-manager
