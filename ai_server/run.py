@@ -9,9 +9,9 @@ async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
     while True:
         data = await websocket.receive_json()
-        for answer in process_data(data):
+        for answer in await process_data(data):
             await websocket.send_json(answer)
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8001)

@@ -3,6 +3,7 @@ import json
 import websocket
 import base64
 import wave
+import websockets
 
 OPENAI_API_KEY = ""
 
@@ -16,19 +17,6 @@ prompt_to_response_to = """I am on a button with the following information:
 """
 
 
-def save_pcm16_as_wav(base64_data, output_filename, sample_rate=24000, channels=1):
-    # Decode Base64 data
-    pcm_data = base64.b64decode(base64_data)
-    
-    # Save as a WAV file
-    with wave.open(output_filename, 'wb') as wf:
-        wf.setnchannels(channels)  # Mono or Stereo
-        wf.setsampwidth(2)  # PCM16 uses 2 bytes per sample
-        wf.setframerate(sample_rate)  # Set the sample rate
-        wf.writeframes(pcm_data)  # Write PCM data
-
-
-
 url = "wss://api.openai.com/v1/realtime?model=gpt-4o-mini-realtime-preview-2024-12-17"
 headers = [
     "Authorization: Bearer " + OPENAI_API_KEY,
@@ -36,7 +24,7 @@ headers = [
 ]
 
 
-def process_data(input):
+async def process_data(input):
     """
     Process the input JSON data and return a JSON with 'text' and 'voice' fields.
 
@@ -47,50 +35,59 @@ def process_data(input):
         str: A JSON string containing the 'text' and 'voice' fields.
     """
 
-    def on_open(ws):
-        print("Connected to server.")
-
-        event = {
-            "type": "response.create",
-            "response": {
-                "modalities": ["text", "audio"],
-                "instructions": f"{initial_prompt}:{input}",
-            }
+    event = {
+        "type": "response.create",
+        "response": {
+            "modalities": ["text", "audio"],
+            "instructions": f"{initial_prompt}:{input}",
         }
-        ws.send(json.dumps(event))
-
-    # Receiving messages will require parsing message payloads
-    # from JSON
-    def on_message(ws, message):
-        data = json.loads(message)
-        if(data.get('type') == "response.audio_transcript.delta") and 'delta' in data:
-            transcript_to_send = {"type":"text", "content":data['delta']}
-            yield transcript_to_send
-        if data.get('type') == 'response.audio.delta' and 'delta' in data:
-            audio_to_send = {"type":"audio", "content":data['delta']}
-            yield audio_to_send
-        if data.get('type') == 'response.function_call_arguments.done' and 'arguments' in data:
-            audio_to_send = {"type":"audio", "content": data['arguments']}
-            yield audio_to_send
-        if data.get('type') == 'response.done':
-            ws.close()
-    
-    ws = websocket.WebSocketApp(
-        url,
-        header=headers,
-        on_open=on_open,
-        on_message=on_message,
-    )
-
-    ws.run_forever()
-
-    # Create the output dictionary
-    output_data = {
-        'text': text,
-        'voice': voice
     }
 
-    # Convert the output dictionary to a JSON string
-    output_json = json.dumps(output_data)
+    # def on_open(ws):
+    #     print("Connected to server.")
+    #     ws.send(json.dumps(event))
+
+    # # Receiving messages will require parsing message payloads
+    # # from JSON
+    # def on_message(ws, message):
+    #     print("on message called")
+    #     data = json.loads(message)
+    #     print(data)
+    #     if(data.get('type') == "response.audio_transcript.delta") and 'delta' in data:
+    #         transcript_to_send = {"type":"text", "content":data['delta']}
+    #         yield transcript_to_send
+    #     if data.get('type') == 'response.audio.delta' and 'delta' in data:
+    #         audio_to_send = {"type":"audio", "content":data['delta']}
+    #         yield audio_to_send
+    #     if data.get('type') == 'response.function_call_arguments.done' and 'arguments' in data:
+    #         function_to_send = {"type":"function", "content": data['arguments']}
+    #         yield function_to_send
+    #     if data.get('type') == 'response.done':
+    #         ws.close()
     
-    return output_json
+    # ws = websocket.WebSocketApp(
+    #     url,
+    #     header=headers,
+    #     on_open=on_open,
+    #     on_message=on_message,
+    # )
+
+    # ws.run_forever()
+
+    async with websockets.connect(url) as websocket:
+        await websocket.send(json.dumps(event))
+        while True:
+            response = await websocket.recv()
+            data = json.loads(response)
+            print(data)
+            if(data.get('type') == "response.audio_transcript.delta") and 'delta' in data:
+                transcript_to_send = {"type":"text", "content":data['delta']}
+                yield transcript_to_send
+            if data.get('type') == 'response.audio.delta' and 'delta' in data:
+                audio_to_send = {"type":"audio", "content":data['delta']}
+                yield audio_to_send
+            if data.get('type') == 'response.function_call_arguments.done' and 'arguments' in data:
+                function_to_send = {"type":"function", "content": data['arguments']}
+                yield function_to_send
+            if data.get('type') == 'response.done':
+                websocket.close()
