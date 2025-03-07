@@ -1,56 +1,48 @@
+// filepath: /home/susitsm/byborg/ai-hackathon/player-component/server.js
+const WebSocket = require('ws');
 const fs = require('fs');
-const http = require('http');
-const { Server } = require('socket.io');
-const { RTCPeerConnection, RTCSessionDescription } = require('wrtc');
 
-const server = http.createServer();
-const io = new Server(server);
+const wss = new WebSocket.Server({ port: 8080 });
 
-io.on('connection', (socket) => {
+const respones = [
+    {type: 'text', content: "hello"},
+     {type: 'animation', content: "anim_id"},
+      {type: 'audio', content: "b64encoded_audio"}
+];
+
+wss.on('connection', (ws) => {
     console.log('Client connected');
 
-    socket.on('offer', async (message) => {
-        const offer = new RTCSessionDescription(message);
-        const peerConnection = new RTCPeerConnection();
-
-        peerConnection.onicecandidate = (event) => {
-            if (event.candidate) {
-                socket.emit('ice-candidate', event.candidate);
-            }
-        };
-
-        peerConnection.ontrack = (event) => {
-            const stream = event.streams[0];
-            const videoTrack = stream.getVideoTracks()[0];
-            const videoStream = fs.createReadStream('/home/susitsm/byborg/ai-hackathon/player-component/player-component/public/sample.mp4');
-
-            videoStream.on('data', (chunk) => {
-                console.log('Sending chunk of data');
-                videoTrack.write(chunk);
-            });
-
-            videoStream.on('end', () => {
-                peerConnection.close();
-            });
-        };
-
-        await peerConnection.setRemoteDescription(offer);
-        const answer = await peerConnection.createAnswer();
-        await peerConnection.setLocalDescription(answer);
-
-        socket.emit('answer', answer);
+    ws.on('message', (message) => {
+        const action = JSON.parse(message);
+        if (action.type === 'prompt') {
+            console.log('Received prompt:', action.payload);
+        }
     });
 
-    socket.on('ice-candidate', async (message) => {
-        const candidate = new RTCIceCandidate(message);
-        await peerConnection.addIceCandidate(candidate);
+    fs.readFile("/home/susitsm/byborg/ai-hackathon/player-component/player-component/public/message.txt", "utf8", (err, data) => {
+        if (err) {
+          console.error("Error reading file:", err);
+          return;
+        }
+        ws.send(JSON.stringify({ type: "audio", content: data}));
+      });
+    /*
+    // Example of sending a video stream to the client
+    const stream = fs.createReadStream('/home/susitsm/byborg/ai-hackathon/player-component/player-component/public/sample.mp4');
+    stream.on('data', (chunk) => {
+        console.log('Sending chunk of data');
+        ws.send(chunk);
     });
 
-    socket.on('disconnect', () => {
+    stream.on('end', () => {
+        ws.close();
+    });
+    */
+
+    ws.on('close', () => {
         console.log('Client disconnected');
     });
 });
 
-server.listen(8080, () => {
-    console.log('RTC server is running on http://localhost:8080');
-});
+console.log('WebSocket server is running on ws://localhost:8080');
