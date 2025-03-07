@@ -11,7 +11,7 @@ def process_json_data(input_json):
         str: A JSON string containing the 'text' and 'voice' fields.
     """
     # Parse the input JSON string
-    data = json.loads(input_json)
+    data = input_json
     
     # Extract the necessary fields (this is just a placeholder, adjust as needed)
     text = data.get('text', '')
