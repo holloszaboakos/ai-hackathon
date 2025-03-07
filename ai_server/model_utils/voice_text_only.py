@@ -24,7 +24,7 @@ headers = [
 ]
 
 
-async def process_data(input):
+async def process_data(input, callback):
     """
     Process the input JSON data and return a JSON with 'text' and 'voice' fields.
 
@@ -43,51 +43,56 @@ async def process_data(input):
         }
     }
 
-    # def on_open(ws):
-    #     print("Connected to server.")
-    #     ws.send(json.dumps(event))
+    def on_open(ws):
+        print("Connected to server.")
+        ws.send(json.dumps(event))
 
-    # # Receiving messages will require parsing message payloads
-    # # from JSON
-    # def on_message(ws, message):
-    #     print("on message called")
-    #     data = json.loads(message)
-    #     print(data)
-    #     if(data.get('type') == "response.audio_transcript.delta") and 'delta' in data:
-    #         transcript_to_send = {"type":"text", "content":data['delta']}
-    #         yield transcript_to_send
-    #     if data.get('type') == 'response.audio.delta' and 'delta' in data:
-    #         audio_to_send = {"type":"audio", "content":data['delta']}
-    #         yield audio_to_send
-    #     if data.get('type') == 'response.function_call_arguments.done' and 'arguments' in data:
-    #         function_to_send = {"type":"function", "content": data['arguments']}
-    #         yield function_to_send
-    #     if data.get('type') == 'response.done':
-    #         ws.close()
+    buffer = ""
+
+    # Receiving messages will require parsing message payloads
+    # from JSON
+    def on_message(ws, message):
+        print("on message called")
+        data = json.loads(message)
+        if(data.get('type') == "response.audio_transcript.delta") and 'delta' in data:
+            transcript_to_send = {"type":"text", "content":data['delta']}
+            callback(transcript_to_send)
+        if data.get('type') == 'response.audio.delta' and 'delta' in data:
+            # audio_to_send = {"type":"audio", "content":data['delta']}
+            # callback(audio_to_send)
+            buffer += data['delta']
+        if data.get('type') == 'response.function_call_arguments.done' and 'arguments' in data:
+            function_to_send = {"type":"function", "content": data['arguments']}
+            callback(function_to_send)
+        if data.get('type') == 'response.done':
+            callback({"type":"done", "content": buffer})
+            ws.close()
+            return
     
-    # ws = websocket.WebSocketApp(
-    #     url,
-    #     header=headers,
-    #     on_open=on_open,
-    #     on_message=on_message,
-    # )
+    ws = websocket.WebSocketApp(
+        url,
+        header=headers,
+        on_open=on_open,
+        on_message=on_message,
+    )
 
-    # ws.run_forever()
+    ws.run_forever()
 
-    async with websockets.connect(url) as websocket:
-        await websocket.send(json.dumps(event))
-        while True:
-            response = await websocket.recv()
-            data = json.loads(response)
-            print(data)
-            if(data.get('type') == "response.audio_transcript.delta") and 'delta' in data:
-                transcript_to_send = {"type":"text", "content":data['delta']}
-                yield transcript_to_send
-            if data.get('type') == 'response.audio.delta' and 'delta' in data:
-                audio_to_send = {"type":"audio", "content":data['delta']}
-                yield audio_to_send
-            if data.get('type') == 'response.function_call_arguments.done' and 'arguments' in data:
-                function_to_send = {"type":"function", "content": data['arguments']}
-                yield function_to_send
-            if data.get('type') == 'response.done':
-                websocket.close()
+    # async with websockets.connect(url) as websocket:
+    #     await websocket.send(json.dumps(event))
+    #     while True:
+    #         response = await websocket.recv()
+    #         data = json.loads(response)
+    #         print(data)
+    #         if(data.get('type') == "response.audio_transcript.delta") and 'delta' in data:
+    #             transcript_to_send = {"type":"text", "content":data['delta']}
+    #             callback(transcript_to_send)
+    #         if data.get('type') == 'response.audio.delta' and 'delta' in data:
+    #             audio_to_send = {"type":"audio", "content":data['delta']}
+    #             callback(audio_to_send)
+    #         if data.get('type') == 'response.function_call_arguments.done' and 'arguments' in data:
+    #             function_to_send = {"type":"function", "content": data['arguments']}
+    #             callback(function_to_send)
+    #         if data.get('type') == 'response.done':
+    #             websocket.close()
+    #             return
