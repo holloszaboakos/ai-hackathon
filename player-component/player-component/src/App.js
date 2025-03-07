@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import PlayerComponent from './component.js';
 import WebSocketVideoPlayer from './websocketplayer.js'
+import RTCAudioPlayer from './rtcaudioplayer.js'
 
 function App() {
     const [prompt, setPrompt] = useState('');
 
     const handleSend = () => {
         // Send the prompt to the PlayerComponent
-        const event = new CustomEvent('sendPrompt', { detail: prompt });
+        const event = new CustomEvent('sendPrompt', { prompt: prompt.current });
         window.dispatchEvent(event);
     };
 
@@ -21,7 +22,7 @@ function App() {
                 placeholder="Enter prompt"
             />
             <button onClick={handleSend}>Send</button>
-            <WebSocketVideoPlayer url="ws://localhost:8080" />
+            <RTCAudioPlayer url="ws://localhost:8080" />
         </div>
     );
 }
