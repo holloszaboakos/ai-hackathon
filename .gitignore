@@ -6,3 +6,4 @@ secrets/
 **/__pycache__/
 
 obsidian_vault/.obsidian
+obsidian_vault/.obsidian/workspace.json
