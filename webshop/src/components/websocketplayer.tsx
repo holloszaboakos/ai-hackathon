@@ -156,7 +156,7 @@ const WebSocketVideoPlayer = ({ url, prompt }: { url: string; prompt: string }) 
                 pictureSource: image_path,
             }));
         };
-
+ 
         return () => {
             //ws.close();
         };
