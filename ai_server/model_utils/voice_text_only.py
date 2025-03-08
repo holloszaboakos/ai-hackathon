@@ -4,10 +4,11 @@ import websocket
 import base64
 import wave
 import websockets
+import asyncio
 
 OPENAI_API_KEY = ""
 
-initial_prompt = "You are now a conversational AI agent for a webshop. You will receive information about user behavior, for example where they click, or what they hover over. Your task is to react to the webshop user’s behavior in a polite manner, softly encouraging them to stay longer on the website, or cite information about the item they are thinking about buying. Act friendly, do not appear pushy.Response to the following prompt:"
+initial_prompt = "You are now a conversational AI agent for a webshop. You will receive information about the webshop, and the user behavior, for example where they click, or what they hover over. Your task is to react to the webshop user’s behavior in a polite manner, softly encouraging them to stay longer on the website, or cite information about the item they are thinking about buying. Act friendly, do not appear pushy.Response to the following prompt:"
 prompt_to_response_to = """I am on a button with the following information: 
 {
   "button_text": "Buy Now",
@@ -34,12 +35,18 @@ async def process_data(input, callback):
     Returns:
         str: A JSON string containing the 'text' and 'voice' fields.
     """
+    global buffer
+    buffer = ""
+
+    context = ""
+    with open("response.json", "r") as f:
+        context = json.load(f)["answer"]["description"]
 
     event = {
         "type": "response.create",
         "response": {
             "modalities": ["text", "audio"],
-            "instructions": f"{initial_prompt}:{input}",
+            "instructions": f"{initial_prompt}\n{context}\n{input}",
         }
     }
 
@@ -47,11 +54,10 @@ async def process_data(input, callback):
         print("Connected to server.")
         ws.send(json.dumps(event))
 
-    buffer = ""
-
     # Receiving messages will require parsing message payloads
     # from JSON
     def on_message(ws, message):
+        global buffer
         print("on message called")
         data = json.loads(message)
         if(data.get('type') == "response.audio_transcript.delta") and 'delta' in data:
@@ -62,10 +68,13 @@ async def process_data(input, callback):
             # callback(audio_to_send)
             buffer += data['delta']
         if data.get('type') == 'response.function_call_arguments.done' and 'arguments' in data:
-            function_to_send = {"type":"function", "content": data['arguments']}
+            function_to_send = {"type":"animation", "content": data['arguments']}
             callback(function_to_send)
         if data.get('type') == 'response.done':
-            callback({"type":"done", "content": buffer})
+            callback({"type":"animation",
+                      "content": "basic pose"})
+            callback({"type":"done", 
+                      "content": buffer})
             ws.close()
             return
     
