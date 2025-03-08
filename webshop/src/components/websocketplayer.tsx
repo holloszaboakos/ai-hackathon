@@ -7,6 +7,7 @@ import { toast } from 'react-toastify';
 import { json } from 'stream/consumers';
 import { waitFor } from '@testing-library/dom';
 import { wait } from '@testing-library/user-event/dist/utils';
+import { Tuple } from '@reduxjs/toolkit';
 
 export function playPCM16(base64String: string, sampleRate = 22000, numChannels = 1) {
 
@@ -50,16 +51,34 @@ function getPromiseFromEvent(item:any, event:any) {
     })
   }
   
+var promptList: Array<string> = [];
+var history: Array<{prompt: string, answer: string}> = [];
 
+function composePrompt(prompt: string) {
+    var realPrompt;
+    if (promptList.length === 0) {
+        realPrompt = prompt;
+    } else {
+        realPrompt = "The user has sent you the following promts previously. Try to reference these in your recommendation: " + promptList.join('\n ');
+        realPrompt = realPrompt + '\n' + "The newest user action is: " + prompt;
+    }
+    
+    promptList.push(prompt);
+    if (promptList.length > 100) {
+        promptList.shift();
+    }
+    return realPrompt;
+}
 
-export async function sendPrompt(prompt: string) {        
+export async function sendPrompt(prompt: string) {
     //console.log('Sending prompt:', prompt.length);
     console.log('Sending prompt:', prompt);
     const ws = new WebSocket("ws://localhost:8000/user_event");
 
     const mediaSource = new MediaSource();
-    console.log(mediaSource);
-    console.log('Sending prompt:', prompt);
+    //console.log(mediaSource);
+    //prompt = composePrompt(prompt);
+    console.log('Sending full prompt:', prompt);
 
     //ws.binaryType = 'arraybuffer';
     var queue: Uint8Array[] = [];
@@ -149,6 +168,7 @@ export async function sendPrompt(prompt: string) {
         console.log('WebSocket closed'); 
         console.log(text);
         //playPCM16(audio_base64, 22000, 1);
+        history.push({prompt: prompt, answer: text});
         toast(text);
         toast((t) => (<img className="bottom-right-image" src={image_path} alt="Bottom Right" />))
     };
@@ -157,7 +177,7 @@ export async function sendPrompt(prompt: string) {
         await getPromiseFromEvent(ws, "close")
       }
 
-    const a = JSON.stringify({ text: prompt});
+    const a = JSON.stringify({ text: prompt, history: history });
     console.log('sending:', a);
     ws.onopen = () => ws.send(a);
     await waitForButtonClick();
