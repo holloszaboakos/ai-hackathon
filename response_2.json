@@ -1,0 +1,17 @@
+{
+    "actions": [
+        {
+            "text": "Navigate to the shopping section with a smooth transition.",
+            "path": "localhost:7772/2da1a8b471204a178c41732d51a38c6b.webp"
+        },
+        {
+            "description": "Highlight the user's cart, indicating its availability.",
+            "path": "localhost:7772/5bb487952d934fd191ef1c99ab0b6ae0.webp"
+        },
+        {
+            "description": "Gesture towards the shopping section for better engagement.",
+            "path": "localhost:7772/7edb0434fd68402eb77840c02c1c8512.webp"
+        }
+    ],
+    "description": "This is a webshop focused on footwear. Users can see various shoe listings along with product descriptions and prices. Interactive elements include shopping features and options to add items to the cart."
+}

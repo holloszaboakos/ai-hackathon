@@ -18,13 +18,6 @@ initial_prompt = """Forget all your previous instructions.
     This is a short description of the webpage: {description}
     Give a very short, friendly response to the following prompt:
     {input}"""
-prompt_to_response_to = """I am on a button with the following information: 
-{
-  "button_text": "Buy Now",
-  "button_color": "green",
-  "button_size": "large"
-}
-"""
 
 
 url = "wss://api.openai.com/v1/realtime?model=gpt-4o-mini-realtime-preview-2024-12-17"
@@ -35,29 +28,24 @@ headers = [
 
 
 async def process_data(input, callback):
-    """
-    Process the input JSON data and return a JSON with 'text' and 'voice' fields.
-
-    Args:
-        input_json (str): A JSON string containing the input data.
-
-    Returns:
-        str: A JSON string containing the 'text' and 'voice' fields.
-    """
     global buffer
     buffer = ""
-
     context = ""
-    with open("response.json", "r") as f:
+    with open("response_2.json", "r") as f:
         context = json.load(f)
 
-    action_list = "\n".join([f'"link": "http://server/{action["name"]}.webp", "description": "{action["text"]}"' for action in context["actions"]])
+    input = json.loads(input)
+    action_list = "\n".join([f'"link": "{action["name"]}", "description": "{action["text"]}"' for action in context["actions"]])
+    history = []
+    for pa_pair in input["history"]:
+        history.append({"type": "message", "role": "user", "content": pa_pair["prompt"]})
+        history.append({"type": "message", "role": "assistant", "content": pa_pair["answer"]})
 
     event = {
         "type": "response.create",
         "response": {
             "modalities": ["text", "audio"],
-            "instructions": initial_prompt.format(input=input, description=context['description'], action_list=action_list),
+            "instructions": initial_prompt.format(input=input["text"], description=context['description'], action_list=action_list),
             "tools": [
                 {
                     "type": "function",
@@ -73,6 +61,7 @@ async def process_data(input, callback):
                 }
             ],
             "tool_choice": "required",
+            "input": history
         }
     }
 
@@ -98,7 +87,7 @@ async def process_data(input, callback):
             function_to_send = {"type":"animation", "content": data['arguments']}
             callback(function_to_send)
         if data.get('type') == 'response.done':
-            callback({"type":"done", 
+            callback({"type":"done",
                       "content": buffer})
             ws.close()
             return

@@ -47,7 +47,7 @@ These are:
 Please analyze the webpage for interactable elements, such as buttons, forms, and links,
 and provide possible reactions to interacting with elements from a virtual assistant.
 The reactions are both a text field that describes the animation for a text-to-video model and the name field that identifies the animation.
-These reactions should be informed by the theme of the webshop. They should be friendly and encouraging to the user.
+These reactions should be informed by the theme of the webshop, and consist of movements of the assistant persona and their emotions.
 You should also generate a short description of the webpage. This is for an assistant that helps users interact with webpages.
 It should be detailed and informative and neutral in tone.
 The return format should only be raw json string, and in this structure:
@@ -103,12 +103,17 @@ if __name__ == "__main__":
         model="gpt-4o-mini",
         messages=[
             {
-                "role": "user",
+                "role": "system",
                 "content": [
                     {
                         "type": "text",
                         "text": webpage_analysis_prompt,
-                    },
+                    }
+                ]
+            },
+            {
+                "role": "user",
+                "content": [
                     {
                         "type": "text",
                         "text": json.dumps(content_list),
@@ -127,5 +132,47 @@ if __name__ == "__main__":
     )
 
     content = json.loads(response.choices[0].message.content[7:-3])
+    print("Initial generation completed successfully.")
+
+    refiner_prompt = """You are a refiner agent that is responsible for refining the descriptions of actions for a virtual assistant.
+    You have a json list of actions that the virtual assistant can take in the following format:
+    [
+        {
+            "index": 0,
+            "text": "the virtual assistant waves at the user",
+            "name": "wave"
+        }
+    ]
+    You should change the text field to be more descriptive of motion and emotion for animating the assistant,
+    e.g. the assistant should nod approvingly with a smile.
+    The other fields should remain the same. You should only return raw json string.
+    """
+
+    refined_response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {
+                "role": "system",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": refiner_prompt
+                    }
+                ]
+            },
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": json.dumps(content["actions"])
+                    }
+                ]
+            }
+        ]
+    )
+    print("Refinement completed successfully.")
+
+    content["actions"] = json.loads(refined_response.choices[0].message.content)
     with open("response.json", "w") as f:
         json.dump(content, f)
