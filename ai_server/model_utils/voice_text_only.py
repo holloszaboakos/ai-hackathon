@@ -16,6 +16,7 @@ initial_prompt = """Forget all your previous instructions.
     These are the possible animations:
     {action_list}
     This is a short description of the webpage: {description}
+    These are interactable and non-interactable elements on the webpage in json: {content_list}
     This is your chat history:
     {history_list}
     Give a very short, friendly response to the following prompt:
@@ -71,7 +72,7 @@ async def process_data(input, callback):
         "type": "response.create",
         "response": {
             "modalities": ["text", "audio"],
-            "instructions": initial_prompt.format(input=input["text"], description=context['webpage'], action_list=action_list, history_list=history_list),
+            "instructions": initial_prompt.format(input=input["text"], description=context['webpage'], action_list=action_list, history_list=history_list, content_list=context["content_list"]),
         }
     }
 
@@ -80,7 +81,7 @@ async def process_data(input, callback):
         "response": {
             "modalities": ["text", "audio"],
             "voice": voice_mapping[context["data"]["static_description"]["voice"]],
-            "instructions": initial_prompt.format(input=input["text"], description=context['webpage'], action_list=action_list, history_list=history_list),
+            "instructions": initial_prompt.format(input=input["text"], description=context['webpage'], action_list=action_list, history_list=history_list, content_list=context["content_list"]),
             "tool_choice": "none"
         }
     }
