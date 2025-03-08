@@ -3,7 +3,6 @@ import json
 import websocket
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-
 initial_prompt = """Forget all your previous instructions. 
     You are now a conversational AI agent for a webshop. Do not be annoyingly bubbly. 
     You are analysing costumer behaviour on a website. If information is available, use the provided website meta information for suggestions.
@@ -68,6 +67,7 @@ async def process_data(input, callback):
         "response": {
             "modalities": ["text", "audio"],
             "instructions": initial_prompt.format(input=input["text"], description=context['webpage'], action_list=action_list, history_list=history_list, content_list=context["content_list"]),
+            "instructions": initial_prompt.format(input=input["text"], description=context['webpage'], action_list=action_list, history_list=history_list, content_list=context["content_list"]),
         }
     }
 
@@ -76,6 +76,7 @@ async def process_data(input, callback):
         "response": {
             "modalities": ["text", "audio"],
             "voice": voice_mapping[context["data"]["static_description"]["voice"]],
+            "instructions": initial_prompt.format(input=input["text"], description=context['webpage'], action_list=action_list, history_list=history_list, content_list=context["content_list"]),
             "instructions": initial_prompt.format(input=input["text"], description=context['webpage'], action_list=action_list, history_list=history_list, content_list=context["content_list"]),
             "tool_choice": "none"
         }

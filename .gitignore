@@ -6,4 +6,9 @@ secrets/
 
 **/__pycache__/
 
+**/*.pyc
+**/*.safetensors
+**/*.webp
+**/*.png
 obsidian_vault/.obsidian
+obsidian_vault/.obsidian/workspace.json
