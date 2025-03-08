@@ -16,9 +16,10 @@ initial_prompt = """Forget all your previous instructions.
     These are the possible animations:
     {action_list}
     This is a short description of the webpage: {description}
+    This is your chat history:
+    {history_list}
     Give a very short, friendly response to the following prompt:
     {input}"""
-
 
 url = "wss://api.openai.com/v1/realtime?model=gpt-4o-mini-realtime-preview-2024-12-17"
 headers = [
@@ -34,23 +35,21 @@ async def process_data(input, callback):
     with open("response_2.json", "r") as f:
         context = json.load(f)
 
-    input = json.loads(input)
-    action_list = "\n".join([f'"link": "{action["name"]}", "description": "{action["text"]}"' for action in context["actions"]])
-    history = []
-    for pa_pair in input["history"]:
-        history.append({"type": "message", "role": "user", "content": pa_pair["prompt"]})
-        history.append({"type": "message", "role": "assistant", "content": pa_pair["answer"]})
+    #input = json.loads(input)
+    action_list = "\n".join([f'"link": http://localhost:7772"{action["path"].split("/")[-1]}", "description": "{action["description"]}"' for action in context["actions"]])
+    history_list = "\n".join([f'"prompt": "{history["prompt"]}", "answer": "{history["answer"]}"' for history in input["history"]])
+    print(initial_prompt.format(input=input["text"], description=context['description'], action_list=action_list, history_list=history_list))
 
     event = {
         "type": "response.create",
         "response": {
             "modalities": ["text", "audio"],
-            "instructions": initial_prompt.format(input=input["text"], description=context['description'], action_list=action_list),
+            "instructions": initial_prompt.format(input=input["text"], description=context['description'], action_list=action_list, history_list=history_list),
             "tools": [
                 {
                     "type": "function",
                     "name": "play_animation",
-                    "description": "Trigger an animation from the built-in assistant. Use only the link list given in the instructions.",
+                    "description": "Trigger an animation from the built-in assistant. Use only the links in the list given in the instructions.",
                     "parameters": {
                         "type": "object",
                         "properties": {
@@ -60,8 +59,7 @@ async def process_data(input, callback):
                     }
                 }
             ],
-            "tool_choice": "required",
-            "input": history
+            "tool_choice": {"type": "function", "name": "play_animation"}
         }
     }
 

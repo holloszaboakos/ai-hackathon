@@ -46,7 +46,7 @@ These are:
 
 Please analyze the webpage for interactable elements, such as buttons, forms, and links,
 and provide possible reactions to interacting with elements from a virtual assistant.
-The reactions are both a text field that describes the animation for a text-to-video model and the name field that identifies the animation.
+The reactions are both a description field that describes the animation for a text-to-video model and the name field that identifies the animation.
 These reactions should be informed by the theme of the webshop, and consist of movements of the assistant persona and their emotions.
 You should also generate a short description of the webpage. This is for an assistant that helps users interact with webpages.
 It should be detailed and informative and neutral in tone.
@@ -55,7 +55,7 @@ The return format should only be raw json string, and in this structure:
     "actions": [
         {
             "index": 0,
-            "text": "the virtual assistant waves at the user",
+            "description": "the virtual assistant waves at the user",
             "name": "wave"
         },
         ...
@@ -139,7 +139,7 @@ if __name__ == "__main__":
     [
         {
             "index": 0,
-            "text": "the virtual assistant waves at the user",
+            "description": "the virtual assistant waves at the user",
             "name": "wave"
         }
     ]
