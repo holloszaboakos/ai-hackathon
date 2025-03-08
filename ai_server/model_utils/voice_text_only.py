@@ -42,7 +42,7 @@ async def process_data(input, callback):
     with open("response.json", "r") as f:
         context = json.load(f)["answer"]["description"]
 
-    action_list = "\n".join([f"{action['name']} - {action["text"]}" for action in context["actions"]])
+    action_list = "\n".join([f'"link": "http://server/{action["name"]}.webp", "description": "{action["text"]}"' for action in context["actions"]])
 
     event = {
         "type": "response.create",
@@ -55,8 +55,9 @@ async def process_data(input, callback):
                 "description": f"""Trigger an animation from the built-in assistant. These are the possible animations:"
                 {action_list}
                 """,
-                "parameters": {"type:": "object", "properties": {"name": {"type": "string", "description": "The name of the animation to play."}}},
-            }
+                "parameters": {"type:": "object", "properties": {"link": {"type": "string", "description": "The link of the animation to play."}}},
+            },
+            "tool_choice": {"type": "function", "function": {"name": "play_animation"}},
         }
     }
 
@@ -96,22 +97,3 @@ async def process_data(input, callback):
     )
 
     ws.run_forever()
-
-    # async with websockets.connect(url) as websocket:
-    #     await websocket.send(json.dumps(event))
-    #     while True:
-    #         response = await websocket.recv()
-    #         data = json.loads(response)
-    #         print(data)
-    #         if(data.get('type') == "response.audio_transcript.delta") and 'delta' in data:
-    #             transcript_to_send = {"type":"text", "content":data['delta']}
-    #             callback(transcript_to_send)
-    #         if data.get('type') == 'response.audio.delta' and 'delta' in data:
-    #             audio_to_send = {"type":"audio", "content":data['delta']}
-    #             callback(audio_to_send)
-    #         if data.get('type') == 'response.function_call_arguments.done' and 'arguments' in data:
-    #             function_to_send = {"type":"function", "content": data['arguments']}
-    #             callback(function_to_send)
-    #         if data.get('type') == 'response.done':
-    #             websocket.close()
-    #             return
