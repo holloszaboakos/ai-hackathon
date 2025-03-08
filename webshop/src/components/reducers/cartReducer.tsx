@@ -6,6 +6,7 @@ import Item5 from '../../images/item5.jpg'
 import Item6 from '../../images/item6.jpg'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import type { RootState } from '../../store'
+import { toast } from 'react-toastify'
 
 const initialState: State = {
     items: [
@@ -92,23 +93,21 @@ export const storeSlice = createSlice({
         subtractShipment: (state) => {
             state.total -= 6
         },
-        gotPictureSource: (state, action: PayloadAction<string>) => {
-            state.triplet.pictureSource = action.payload
-        },
-        gotText: (state, action: PayloadAction<string>) => {
-            state.triplet.text = action.payload
-
-        },
-        gotAudioSource: (state, action: PayloadAction<string>) => {
-            state.triplet.audioSource = action.payload
-
+        gotTriplet: (state, action: PayloadAction<Triplet>) => {
+            playPCM16(action.payload.audioSource!!, 22000, 1);
+            toast(action.payload.text);
+            toast((t) => (<img className="bottom-right-image" src={action.payload.pictureSource} alt="Bottom Right" />))
         }
     }
 })
 
-export const { addToCart, removeItem, addQuantity, subtractQuantity, addShipment, subtractShipment, gotPictureSource, gotText, gotAudioSource } = storeSlice.actions
+export const { addToCart, removeItem, addQuantity, subtractQuantity, addShipment, subtractShipment, gotTriplet } = storeSlice.actions
 
 // Other code such as selectors can use the imported `RootState` type
 export const selectCart: (state: RootState) => State = (state: RootState) => state.cart
 
 export default storeSlice.reducer
+function playPCM16(audioSource: string, arg1: number, arg2: number) {
+    throw new Error('Function not implemented.')
+}
+

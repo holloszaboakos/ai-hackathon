@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import {
-    gotPictureSource, gotTextSource, gotAudioSource
+    gotTriplet
 } from "./reducers/cartReducer";
 import { useAppDispatch } from '../hooks'
 
@@ -50,7 +50,7 @@ const WebSocketVideoPlayer = ({ url, prompt }: { url: string; prompt: string }) 
 
 
     const sendPrompt = (prompt: string) => {
-        
+
         //console.log('Sending prompt:', prompt.length);
         console.log('Sending prompt:', prompt);
         const ws = new WebSocket(url);
@@ -118,7 +118,7 @@ const WebSocketVideoPlayer = ({ url, prompt }: { url: string; prompt: string }) 
             playPCM16(base64, 22000, 1);
         }
         var text = '';
-        function displayText(new_text:string) {
+        function displayText(new_text: string) {
             text = text + new_text;
             console.log('displaying text:', text);
         }
@@ -149,10 +149,12 @@ const WebSocketVideoPlayer = ({ url, prompt }: { url: string; prompt: string }) 
 
         ws.onerror = (error) => console.error('WebSocket Error:', error);
         ws.onclose = () => {
-            console.log('WebSocket closed'); 
-            dispatch(gotAudioSource(audio_base64));
-            dispatch(gotTextSource(text));
-            dispatch(gotPictureSource(image_path));
+            console.log('WebSocket closed');
+            dispatch(gotTriplet({
+                audioSource: audio_base64,
+                text: text,
+                pictureSource: image_path,
+            }));
         };
 
         return () => {

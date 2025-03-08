@@ -49,8 +49,7 @@
               "title": "Open AI realtime audio"
             }
           }
-        ],
-        "currentTab": 2
+        ]
       }
     ],
     "direction": "vertical"
@@ -197,10 +196,10 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "648f56037b1c7e4b",
+  "active": "ec012717232cded0",
   "lastOpenFiles": [
-    "Opening Ceremony.md",
     "Open AI realtime audio.md",
+    "Opening Ceremony.md",
     "About Repo.md"
   ]
 }
