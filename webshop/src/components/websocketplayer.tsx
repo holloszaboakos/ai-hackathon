@@ -54,78 +54,11 @@ function getPromiseFromEvent(item:any, event:any) {
 var promptList: Array<string> = [];
 var history: Array<{prompt: string, answer: string}> = [];
 
-function composePrompt(prompt: string) {
-    var realPrompt;
-    if (promptList.length === 0) {
-        realPrompt = prompt;
-    } else {
-        realPrompt = "The user has sent you the following promts previously. Try to reference these in your recommendation: " + promptList.join('\n ');
-        realPrompt = realPrompt + '\n' + "The newest user action is: " + prompt;
-    }
-    
-    promptList.push(prompt);
-    if (promptList.length > 100) {
-        promptList.shift();
-    }
-    return realPrompt;
-}
-
 export async function sendPrompt(prompt: string) {
     //console.log('Sending prompt:', prompt.length);
     console.log('Sending prompt:', prompt);
     const ws = new WebSocket("ws://localhost:8000/user_event");
 
-    const mediaSource = new MediaSource();
-    //console.log(mediaSource);
-    //prompt = composePrompt(prompt);
-    console.log('Sending full prompt:', prompt);
-
-    //ws.binaryType = 'arraybuffer';
-    var queue: Uint8Array[] = [];
-    var streamingStarted = false;
-    mediaSource.addEventListener('sourceopen', () => {
-
-        const mimeCodec = 'video/mp4; codecs="avc1.42E01E, mp4a.40.2"';
-        if (!MediaSource.isTypeSupported(mimeCodec)) {
-            console.error("MIME type or codec not supported");
-        }
-        const sourceBuffer = mediaSource.addSourceBuffer(mimeCodec);
-
-        sourceBuffer.addEventListener("onerror", (event) => {
-            console.log("Media source error", event);
-        });
-
-        sourceBuffer.addEventListener('updateend', () => {
-            if (!sourceBuffer.updating && mediaSource.readyState === 'open') {
-                if (queue.length > 0) {
-                    const data = queue.shift(); // pop from the beginning
-                    console.log('appending from queue, queue length:', queue.length);
-                    sourceBuffer.appendBuffer(data as BufferSource);
-                } else { // the queue runs empty, so we must force-feed the next packet
-                    streamingStarted = false;
-                }
-            }
-            else {
-                console.error('asdf');
-            }
-            mediaSource.endOfStream();
-        });
-
-        function playStreamedAudio(base64: WithImplicitCoercion<string> | { [Symbol.toPrimitive](hint: "string"): string; }) {
-            const data = new Uint8Array(Buffer.from(base64, "base64"));
-
-            console.log("data", data);
-            if (streamingStarted) {
-                queue.push(data);
-            } else {
-                console.log('appending received data:', data, sourceBuffer.updating);
-                streamingStarted = true;
-                sourceBuffer.appendBuffer(data);
-            }
-        }
-
-    });
-    var audio_base64 = '';
     function playAudio(base64: string) {
         playPCM16(base64, 22000, 1);
     }
