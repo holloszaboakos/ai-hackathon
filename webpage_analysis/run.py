@@ -50,5 +50,5 @@ if __name__ == "__main__":
     full_content["webpage"] = content["description"]
     full_content["content_list"] = json.dumps(content_list)
     print("Assistant response generated successfully.")
-    with open(f"full_data_{assistant_description_file.split('.')[0]}.json", "w") as f:
-        json.dump(full_content, f)    
+    with open(f"full_data_{assistant_description_file.split('/')[-1].split('.')[0]}.json", "w") as f:
+        json.dump(full_content, f)
