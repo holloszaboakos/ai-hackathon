@@ -9,3 +9,5 @@ secrets/
 **/*.safetensors
 **/*.webp
 **/*.png
+obsidian_vault/.obsidian
+obsidian_vault/.obsidian/workspace.json

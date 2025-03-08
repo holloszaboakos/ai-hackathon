@@ -1,0 +1,71 @@
+{
+    "data": {
+        "reasoning": "The AI agent is designed to interact with users in an engaging and approachable manner. The agent will perform various functions such as greeting the user, providing feedback, and expressing emotions that align with user actions or inquiries. The animations should be expressive to clearly convey the agent's emotional responses, whether they are positive, negative, or neutral. This will help in creating a more immersive and interactive experience for the user.",
+        "static_description": {
+            "description": "A slim blonde girl with long hair, wearing a stylish business outfit and high heels. Full body standing photograph with a plain white background, perfect photograph. Top to toe view, facing the camera. Distant, full figure, single person.",
+            "voice": "female"
+        },
+        "animations": [
+            {
+                "description": "A girl smiling and waving hello to the camera.",
+                "prompt": "A slim blonde girl with long hair, smiling brightly and waving her hand softly at the camera. Friendly greeting, single person."
+            },
+            {
+                "description": "The girl gives a thumbs down with a disappointed expression.",
+                "prompt": "A slim blonde girl with long hair, frowning slightly and giving a thumbs down gesture with her right hand. Expressing disapproval, single person."
+            },
+            {
+                "description": "The girl claps her hands excitedly and nods approvingly.",
+                "prompt": "A slim blonde girl with long hair, clapping her hands with enthusiasm and nodding her head with a big approving smile. Positive feedback, single person."
+            },
+            {
+                "description": "The girl puts a finger on her chin, looking upwards thoughtfully.",
+                "prompt": "A slim blonde girl with long hair, placing a finger on her chin and gazing upwards with a thoughtful expression. Contemplative thinking, single person."
+            },
+            {
+                "description": "The girl widens her eyes and covers her mouth in surprise.",
+                "prompt": "A slim blonde girl with long hair, widening her eyes and placing her hand over her mouth in an expression of surprise. Sudden surprise, single person."
+            },
+            {
+                "description": "The girl jumps slightly and pumps her fists in celebration.",
+                "prompt": "A slim blonde girl with long hair, jumping a little and pumping her fists in the air with a joyous expression. Celebrating success, single person."
+            },
+            {
+                "description": "The girl looks away with a disgusted expression, scrunching her nose.",
+                "prompt": "A slim blonde girl with long hair, turning her head slightly away and scrunching her nose in distaste. Expressing disgust, single person."
+            }
+        ]
+    },
+    "anims": [
+        {
+            "description": "A girl smiling and waving hello to the camera.",
+            "path": "/static/ed5c5d1050364c5293f204581f5d5de7.webp"
+        },
+        {
+            "description": "The girl gives a thumbs down with a disappointed expression.",
+            "path": "/static/6ffe734a8c8048d5bd986e3ee1bfb83c.webp"
+        },
+        {
+            "description": "The girl claps her hands excitedly and nods approvingly.",
+            "path": "/static/2b5bb9fbfc474392b1f6cd984ea2de6d.webp"
+        },
+        {
+            "description": "The girl puts a finger on her chin, looking upwards thoughtfully.",
+            "path": "/static/409fbc49edcc4202aa3e90c79a3c1546.webp"
+        },
+        {
+            "description": "The girl widens her eyes and covers her mouth in surprise.",
+            "path": "/static/5555ad1421f543ad864378b56a30380b.webp"
+        },
+        {
+            "description": "The girl jumps slightly and pumps her fists in celebration.",
+            "path": "/static/15ea1f7a54eb48c4a4114f5c777a9b1e.webp"
+        },
+        {
+            "description": "The girl looks away with a disgusted expression, scrunching her nose.",
+            "path": "/static/1c4ecb92108f438f8da1dc5c024f0aaa.webp"
+        }
+    ],
+    "webpage": "This webpage features a collection of footwear, showcasing brands like Adidas and Vans. Users can explore products and manage their shopping cart, with clear sections for items and a dedicated 'Shop' area.",
+    "content_list":"[{\"type\": \"text\", \"bbox\": [0.612593412399292, 0.451396644115448, 0.6958377957344055, 0.4804469347000122], \"interactivity\": false, \"content\": \"Adidas\", \"source\": \"box_ocr_content_ocr\", \"index\": 0}, {\"type\": \"text\", \"bbox\": [0.09605123102664948, 0.9340782165527344, 0.15795090794563293, 0.9631285071372986], \"interactivity\": false, \"content\": \"Vans\", \"source\": \"box_ocr_content_ocr\", \"index\": 1}, {\"type\": \"text\", \"bbox\": [0.6147278547286987, 0.9340782165527344, 0.687299907207489, 0.9631285071372986], \"interactivity\": false, \"content\": \"White\", \"source\": \"box_ocr_content_ocr\", \"index\": 2}, {\"type\": \"icon\", \"bbox\": [0.703538179397583, 0.0, 0.7716407179832458, 0.07235181331634521], \"interactivity\": true, \"content\": \"Shop \", \"source\": \"box_yolo_content_ocr\", \"index\": 3}, {\"type\": \"icon\", \"bbox\": [0.7707094550132751, 0.0, 0.8534519672393799, 0.07159403711557388], \"interactivity\": true, \"content\": \"My cart \", \"source\": \"box_yolo_content_ocr\", \"index\": 4}, {\"type\": \"icon\", \"bbox\": [0.4134388864040375, 0.0, 0.5655838847160339, 0.07201160490512848], \"interactivity\": true, \"content\": \"Shopping \", \"source\": \"box_yolo_content_ocr\", \"index\": 5}, {\"type\": \"icon\", \"bbox\": [0.13816814124584198, 0.09308618307113647, 0.8868520259857178, 0.2682951092720032], \"interactivity\": true, \"content\": \"Our items \", \"source\": \"box_yolo_content_ocr\", \"index\": 6}, {\"type\": \"icon\", \"bbox\": [0.5878339409828186, 0.4743952453136444, 0.912077784538269, 0.6455119252204895], \"interactivity\": true, \"content\": \"Lorem ipsum dolor sit amet consectetur adipisicing elit: Minima ex: Price: 80S \", \"source\": \"box_yolo_content_ocr\", \"index\": 7}, {\"type\": \"icon\", \"bbox\": [0.07213489711284637, 0.1813063770532608, 0.3929388225078583, 0.649880588054657], \"interactivity\": true, \"content\": \"Winter body Lorem ipsum dolor sit amet consectetur adipisicing elit. Minima ex: Price: 110 \", \"source\": \"box_yolo_content_ocr\", \"index\": 8}, {\"type\": \"icon\", \"bbox\": [0.9836295247077942, 0.0, 0.9999793767929077, 0.017956135794520378], \"interactivity\": true, \"content\": \"moving up or down.\", \"source\": \"box_yolo_content_yolo\", \"index\": 9}, {\"type\": \"icon\", \"bbox\": [0.8512986898422241, 0.0, 0.9086084365844727, 0.07047920674085617], \"interactivity\": true, \"content\": \"Show More Options\", \"source\": \"box_yolo_content_yolo\", \"index\": 10}, {\"type\": \"icon\", \"bbox\": [0.9830119609832764, 0.9805052280426025, 1.0, 1.0], \"interactivity\": true, \"content\": \"M0,0L9,0 4.5,5z\", \"source\": \"box_yolo_content_yolo\", \"index\": 11}, {\"type\": \"icon\", \"bbox\": [0.8390060067176819, 0.9725794196128845, 0.8878421187400818, 1.0], \"interactivity\": true, \"content\": \"adding or creating a new item.\", \"source\": \"box_yolo_content_yolo\", \"index\": 12}, {\"type\": \"icon\", \"bbox\": [0.32148298621177673, 0.9723058342933655, 0.37232956290245056, 1.0], \"interactivity\": true, \"content\": \"adding or creating a new item.\", \"source\": \"box_yolo_content_yolo\", \"index\": 13}]"
+}

@@ -1,0 +1,71 @@
+{
+    "data": {
+        "reasoning": "The AI agent is designed to assist users in navigating a footwear-focused shopping website. Her role involves guiding users through the shopping experience, providing feedback on their actions, and reacting to various user inputs. She will need to express a range of emotions such as greeting, positive and negative feedback, thinking, surprise, and celebration. Her anime style and exaggerated expressions will make her interactions more engaging and memorable for users.",
+        "static_description": {
+            "description": "A young anime girl with large, expressive eyes and a ponytail, wearing a trendy outfit with a colorful jacket and sneakers. Full body standing photograph with a white background, perfect photograph. Top to toe view, facing the camera. Distant, full figure, single person.",
+            "voice": "female"
+        },
+        "animations": [
+            {
+                "description": "Greeting the user with a friendly wave.",
+                "prompt": "An energetic anime girl with a ponytail, smiling broadly and waving at the camera with enthusiasm. Cheerful and inviting greeting, single person."
+            },
+            {
+                "description": "Positive feedback for adding an item to the cart.",
+                "prompt": "An anime girl clapping her hands with excitement and giving a thumbs up to the camera. Encouraging and positive reinforcement, single person, thumbs up emote."
+            },
+            {
+                "description": "Negative feedback for an error or issue.",
+                "prompt": "An anime girl with a concerned expression, shaking her head slowly and frowning slightly. Clear expression of disappointment, single person."
+            },
+            {
+                "description": "Thinking about a question or problem.",
+                "prompt": "An anime girl with a thoughtful expression, tapping her chin with one finger and looking upwards. Deep in thought, single person."
+            },
+            {
+                "description": "Surprise reaction to unexpected user action.",
+                "prompt": "An anime girl with wide eyes and mouth open in surprise, hands raised slightly in front of her. Shocked and amazed expression, single person."
+            },
+            {
+                "description": "Celebration for completing a purchase.",
+                "prompt": "An anime girl jumping in the air with joy, arms raised high and a big smile on her face. Celebratory and triumphant, single person."
+            },
+            {
+                "description": "Expressing disgust at an undesirable action or item.",
+                "prompt": "An anime girl with a scrunched nose and a grimace, waving her hand dismissively in front of her. Clear expression of disgust, single person."
+            }
+        ]
+    },
+    "anims": [
+        {
+            "description": "Greeting the user with a friendly wave.",
+            "path": "/static/1d59696e9b0246d8ab248faed1279036.webp"
+        },
+        {
+            "description": "Positive feedback for adding an item to the cart.",
+            "path": "/static/c31dd33e3c04483394244d305772cd3e.webp"
+        },
+        {
+            "description": "Negative feedback for an error or issue.",
+            "path": "/static/b3dcf9cd5fe049eebcd42a2d68294954.webp"
+        },
+        {
+            "description": "Thinking about a question or problem.",
+            "path": "/static/964d539cca484662a2c17cb4a855f4aa.webp"
+        },
+        {
+            "description": "Surprise reaction to unexpected user action.",
+            "path": "/static/9d0a1606095548cfbf2c3cd5b913e184.webp"
+        },
+        {
+            "description": "Celebration for completing a purchase.",
+            "path": "/static/fb7c704b47a641bb801a2d2649b5e643.webp"
+        },
+        {
+            "description": "Expressing disgust at an undesirable action or item.",
+            "path": "/static/ae49436febde4385899a98a2c43681e2.webp"
+        }
+    ],
+    "webpage": "This webpage features a collection of footwear, showcasing brands like Adidas and Vans. Users can explore products and manage their shopping cart, with clear sections for items and a dedicated 'Shop' area.",
+    "content_list":"[{\"type\": \"text\", \"bbox\": [0.612593412399292, 0.451396644115448, 0.6958377957344055, 0.4804469347000122], \"interactivity\": false, \"content\": \"Adidas\", \"source\": \"box_ocr_content_ocr\", \"index\": 0}, {\"type\": \"text\", \"bbox\": [0.09605123102664948, 0.9340782165527344, 0.15795090794563293, 0.9631285071372986], \"interactivity\": false, \"content\": \"Vans\", \"source\": \"box_ocr_content_ocr\", \"index\": 1}, {\"type\": \"text\", \"bbox\": [0.6147278547286987, 0.9340782165527344, 0.687299907207489, 0.9631285071372986], \"interactivity\": false, \"content\": \"White\", \"source\": \"box_ocr_content_ocr\", \"index\": 2}, {\"type\": \"icon\", \"bbox\": [0.703538179397583, 0.0, 0.7716407179832458, 0.07235181331634521], \"interactivity\": true, \"content\": \"Shop \", \"source\": \"box_yolo_content_ocr\", \"index\": 3}, {\"type\": \"icon\", \"bbox\": [0.7707094550132751, 0.0, 0.8534519672393799, 0.07159403711557388], \"interactivity\": true, \"content\": \"My cart \", \"source\": \"box_yolo_content_ocr\", \"index\": 4}, {\"type\": \"icon\", \"bbox\": [0.4134388864040375, 0.0, 0.5655838847160339, 0.07201160490512848], \"interactivity\": true, \"content\": \"Shopping \", \"source\": \"box_yolo_content_ocr\", \"index\": 5}, {\"type\": \"icon\", \"bbox\": [0.13816814124584198, 0.09308618307113647, 0.8868520259857178, 0.2682951092720032], \"interactivity\": true, \"content\": \"Our items \", \"source\": \"box_yolo_content_ocr\", \"index\": 6}, {\"type\": \"icon\", \"bbox\": [0.5878339409828186, 0.4743952453136444, 0.912077784538269, 0.6455119252204895], \"interactivity\": true, \"content\": \"Lorem ipsum dolor sit amet consectetur adipisicing elit: Minima ex: Price: 80S \", \"source\": \"box_yolo_content_ocr\", \"index\": 7}, {\"type\": \"icon\", \"bbox\": [0.07213489711284637, 0.1813063770532608, 0.3929388225078583, 0.649880588054657], \"interactivity\": true, \"content\": \"Winter body Lorem ipsum dolor sit amet consectetur adipisicing elit. Minima ex: Price: 110 \", \"source\": \"box_yolo_content_ocr\", \"index\": 8}, {\"type\": \"icon\", \"bbox\": [0.9836295247077942, 0.0, 0.9999793767929077, 0.017956135794520378], \"interactivity\": true, \"content\": \"moving up or down.\", \"source\": \"box_yolo_content_yolo\", \"index\": 9}, {\"type\": \"icon\", \"bbox\": [0.8512986898422241, 0.0, 0.9086084365844727, 0.07047920674085617], \"interactivity\": true, \"content\": \"Show More Options\", \"source\": \"box_yolo_content_yolo\", \"index\": 10}, {\"type\": \"icon\", \"bbox\": [0.9830119609832764, 0.9805052280426025, 1.0, 1.0], \"interactivity\": true, \"content\": \"M0,0L9,0 4.5,5z\", \"source\": \"box_yolo_content_yolo\", \"index\": 11}, {\"type\": \"icon\", \"bbox\": [0.8390060067176819, 0.9725794196128845, 0.8878421187400818, 1.0], \"interactivity\": true, \"content\": \"adding or creating a new item.\", \"source\": \"box_yolo_content_yolo\", \"index\": 12}, {\"type\": \"icon\", \"bbox\": [0.32148298621177673, 0.9723058342933655, 0.37232956290245056, 1.0], \"interactivity\": true, \"content\": \"adding or creating a new item.\", \"source\": \"box_yolo_content_yolo\", \"index\": 13}]"
+}
