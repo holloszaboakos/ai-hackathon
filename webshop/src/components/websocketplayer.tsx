@@ -1,4 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
+import {
+    gotPictureSource, gotTextSource, gotAudioSource
+} from "./reducers/cartReducer";
+import { useAppDispatch } from '../hooks'
 
 function playPCM16(base64String: string, sampleRate = 22000, numChannels = 1) {
 
@@ -35,6 +39,7 @@ function playPCM16(base64String: string, sampleRate = 22000, numChannels = 1) {
 
 
 const WebSocketVideoPlayer = ({ url, prompt }: { url: string; prompt: string }) => {
+    const dispatch = useAppDispatch();
     const videoRef = useRef(null);
     const audioRef = useRef(null);
     const imageRef = useRef(null);
@@ -45,6 +50,7 @@ const WebSocketVideoPlayer = ({ url, prompt }: { url: string; prompt: string }) 
 
 
     const sendPrompt = (prompt: string) => {
+        
         //console.log('Sending prompt:', prompt.length);
         console.log('Sending prompt:', prompt);
         const ws = new WebSocket(url);
@@ -107,13 +113,18 @@ const WebSocketVideoPlayer = ({ url, prompt }: { url: string; prompt: string }) 
             }
 
         });
+        var audio_base64 = '';
         function playAudio(base64: string) {
             playPCM16(base64, 22000, 1);
         }
-        function displayText(text: any) {
+        var text = '';
+        function displayText(new_text:string) {
+            text = text + new_text;
             console.log('displaying text:', text);
         }
-        function displayImage(image_path: any) {
+        var image_path = '';
+        function displayImage(_image_path: any) {
+            image_path = _image_path;
             console.log('displaying image:', image_path);
         }
         ws.onmessage = (event) => {
@@ -137,7 +148,12 @@ const WebSocketVideoPlayer = ({ url, prompt }: { url: string; prompt: string }) 
         };
 
         ws.onerror = (error) => console.error('WebSocket Error:', error);
-        ws.onclose = () => { console.log('WebSocket closed'); };
+        ws.onclose = () => {
+            console.log('WebSocket closed'); 
+            dispatch(gotAudioSource(audio_base64));
+            dispatch(gotTextSource(text));
+            dispatch(gotPictureSource(image_path));
+        };
 
         return () => {
             //ws.close();
