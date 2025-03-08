@@ -103,11 +103,11 @@ async def process_data(input, callback):
             function_to_send = {"type":"animation", "content": data['arguments']}
             callback(function_to_send)
         if data.get('type') == 'response.done':
-            callback({"type":"done",
-                      "content": buffer})
             if len(buffer) == 0:
                 ws.send(json.dumps(event))
             else:
+                callback({"type":"done",
+                        "content": buffer})
                 ws.close()
     
     ws = websocket.WebSocketApp(

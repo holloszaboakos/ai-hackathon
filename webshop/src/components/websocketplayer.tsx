@@ -86,7 +86,7 @@ export async function sendPrompt(prompt: string) {
                 done = true;
                 break;
             case 'animation':
-                displayImage(data.content);
+                displayImage(JSON.parse(data.content).link);
                 break;
             case 'text':
                 displayText(data.content);
