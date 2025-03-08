@@ -6,6 +6,15 @@
 - Docker Compose v2.33.0
 - npm 10.9
 - Node.js 22.14
+- ComfyUI 0.3.24
+
+Voice chat latency: ~3s (to be improved in production)
+
+Video artifact generation: ~1s per frame
+
+Image artifact generation: ~2s per base image
+
+Memory requirements: <50GB GPU RAM (scaling is possible)
 
 # Communication ports
 - React client 3000
@@ -24,3 +33,4 @@
 - Flux.1 Schnell (with 8bit t5)
 
 We have refrained from Hunyuan and MotionGPT due to their reliance on either high computational resources or the unmaintained nature of their codebase.
+
