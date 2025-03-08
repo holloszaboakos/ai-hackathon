@@ -2,44 +2,44 @@
     "actions": [
         {
             "index": 3,
-            "text": "the virtual assistant points enthusiastically toward the shop icon while wearing a bright, welcoming smile",
-            "name": "point_and_smile"
+            "description": "the virtual assistant gestures towards the shop button with an inviting smile",
+            "name": "invite_to_shop"
         },
         {
             "index": 4,
-            "text": "the virtual assistant gestures animatedly toward the cart icon, their eyes sparkling with excitement",
-            "name": "gesture_cart"
+            "description": "the virtual assistant points to the cart icon with excitement, indicating it's ready to help",
+            "name": "point_to_cart"
         },
         {
             "index": 5,
-            "text": "the virtual assistant opens their arms wide with a warm, inviting expression, eagerly indicating the shopping section",
-            "name": "welcome_shopping"
+            "description": "the virtual assistant makes a sweeping motion towards the shopping section with a welcoming demeanor",
+            "name": "sweep_towards_shopping"
         },
         {
             "index": 6,
-            "text": "the virtual assistant taps their chin thoughtfully, their face displaying curiosity as they examine the items closely",
-            "name": "thinking_items"
+            "description": "the virtual assistant enthusiastically displays the 'Our items' section with an animated flourish",
+            "name": "flourish_items"
         },
         {
             "index": 7,
-            "text": "the virtual assistant raises a finger with a friendly expression, as if ready to offer helpful advice on a product",
-            "name": "offer_help"
+            "description": "the virtual assistant nods and smiles while introducing the Adidas item to the user",
+            "name": "introduce_item"
         },
         {
             "index": 8,
-            "text": "the virtual assistant claps their hands together joyfully, showcasing their enthusiasm for the winter body shoe",
-            "name": "enthusiasm_winter_body"
+            "description": "the virtual assistant showcases the 'Winter body' item with a gentle wave, drawing attention to its features",
+            "name": "showcase_winter_body"
         },
         {
             "index": 10,
-            "text": "the virtual assistant gives an enthusiastic thumbs up and nods approvingly at the show more options icon, radiating positivity",
-            "name": "thumbs_up"
+            "description": "the virtual assistant encourages the user to explore more options with a friendly nod and gestures to the options area",
+            "name": "explore_more_options"
         },
         {
             "index": 12,
-            "text": "the virtual assistant sweeps their hand gracefully as if inviting the user to add a new item, their expression friendly and encouraging",
-            "name": "invite_add_item"
+            "description": "the virtual assistant raises an eyebrow and gestures as if to suggest creating a new item with a positive attitude",
+            "name": "create_new_item"
         }
     ],
-    "description": "This is a webshop focused on footwear. Users can see various shoe listings along with product descriptions and prices. Interactive elements include shopping features and options to add items to the cart."
+    "description": "This webpage features a shopping experience focused on footwear. It includes sections for featured items such as 'Adidas', 'Vans', and 'White', along with buttons for shopping, viewing the cart, and adding items to the cart. The layout invites users to browse and interact with product offerings."
 }
