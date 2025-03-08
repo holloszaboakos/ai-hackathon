@@ -19,7 +19,8 @@ services:
     ports:
       - "7773:7773"
     net: host
-
+    env_file:
+      - .env
   webserver:
     image: httpd:2.4
     container_name: my-apache-app
