@@ -1,0 +1,29 @@
+services:
+  omniparser:
+    build: ./src/omniparser
+    ports:
+      - "12320:8000"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+  
+  comfy_api:
+    build: ./src/comfy_api
+    ports:
+      - "7771:7771"
+    net: host
+  animgen_api:
+    build: ./src/animgen_api
+    ports:
+      - "7773:7773"
+    net: host
+
+  webserver:
+    image: httpd:2.4
+    container_name: my-apache-app
+    ports:
+      - "7772:80"
+    volumes:
+      - ./src/comfy_api/static/:/usr/local/apache2/htdocs/

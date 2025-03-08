@@ -4,3 +4,8 @@ secrets/
 .env
 
 **/__pycache__/
+
+**/*.pyc
+**/*.safetensors
+**/*.webp
+**/*.png
