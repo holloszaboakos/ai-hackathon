@@ -1,5 +1,6 @@
 import os
 import json
+import time
 import websocket
 import base64
 import wave
@@ -40,6 +41,27 @@ async def process_data(input, callback):
     history_list = "\n".join([f'"prompt": "{history["prompt"]}", "answer": "{history["answer"]}"' for history in input["history"]])
     print(initial_prompt.format(input=input["text"], description=context['description'], action_list=action_list, history_list=history_list))
 
+    pre_event = {
+        "type": "session.update",
+        "session": {
+            "tools": [
+                {
+                    "type": "function",
+                    "name": "play_animation",
+                    "description": "Trigger an animation from the built-in assistant. Use only the links in the list given in the instructions.",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "link": { "type": "string", "description": "The link of the animation to play." }
+                        },
+                        "required": ["link"]
+                    }
+                }
+            ],
+            "tool_choice": "required"
+        }
+    }
+
     event = {
         "type": "response.create",
         "response": {
@@ -59,12 +81,13 @@ async def process_data(input, callback):
                     }
                 }
             ],
-            "tool_choice": {"type": "function", "name": "play_animation"}
+            "tool_choice": "required"
         }
     }
 
     def on_open(ws):
         print("Connected to server.")
+        ws.send(json.dumps(pre_event))
         ws.send(json.dumps(event))
 
     # Receiving messages will require parsing message payloads
