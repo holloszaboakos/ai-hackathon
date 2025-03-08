@@ -5,6 +5,8 @@ from selenium.webdriver.chrome.options import Options
 import base64
 from openai import OpenAI
 import json
+import bs4
+import os
 
 def read_webpage(url):
     response = requests.get(url)
@@ -32,16 +34,35 @@ def encode_image(image_path):
     with open(image_path, "rb") as image_file:
         return base64.b64encode(image_file.read()).decode("utf-8")
 
-client = OpenAI()
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-webpage_analysis_prompt = """"These are the source code of a webpage,
-a json-encoded list of interactable elements on the webpage with their index,
-and a screenshot of the webpage with the interactable elements and numbered by their index.
+webpage_analysis_prompt = """"
+You are an agent analyzing a webpage for a virtual assistant.
+You have three inputs.
+These are:
+- the source code of a webpage
+- a json-encoded list of interactable elements on the webpage with their index
+- a screenshot of the webpage with the interactable elements and numbered by their index
+
 Please analyze the webpage for interactable elements, such as buttons, forms, and links,
-and provide possible reactions from a virtual assistant helping the user interact with the webpage.
-The reactions are both a text that the assistant says and an emotion and / or movement.
-These reactions should be funny, witty and should make the user feel comfortable and engaged.
-Give these possible reactions in a list with the indexes from the json-encoded list."""
+and provide possible reactions to interacting with elements from a virtual assistant.
+The reactions are both a description field that describes the animation for a text-to-video model and the name field that identifies the animation.
+These reactions should be informed by the theme of the webshop, and consist of movements of the assistant persona and their emotions.
+You should also generate a short description of the webpage. This is for an assistant that helps users interact with webpages.
+It should be detailed and informative and neutral in tone.
+The return format should only be raw json string, and in this structure:
+{
+    "actions": [
+        {
+            "index": 0,
+            "description": "the virtual assistant waves at the user",
+            "name": "wave"
+        },
+        ...
+    ],
+    "description": "This is a webpage that sells shoes. It has a cart button and a search bar.",
+}
+"""
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
@@ -50,6 +71,19 @@ if __name__ == "__main__":
 
     url = sys.argv[1]
     html_code = read_webpage(url)
+
+    html_code_with_link_content = ""
+    soup = bs4.BeautifulSoup(html_code, 'html.parser')
+    links = [a['href'] for a in soup.find_all('a', href=True)]
+    for link in links:
+        if link.startswith("/"):
+            link = url + link
+        try:
+            page_code = read_webpage(link)
+            html_code += f"\n\nLink: {link}, html content: {page_code}"
+        except:
+            pass
+    
     render_and_screenshot(url)
     print("Screenshot saved successfully.")
 
@@ -69,12 +103,17 @@ if __name__ == "__main__":
         model="gpt-4o-mini",
         messages=[
             {
-                "role": "user",
+                "role": "system",
                 "content": [
                     {
                         "type": "text",
                         "text": webpage_analysis_prompt,
-                    },
+                    }
+                ]
+            },
+            {
+                "role": "user",
+                "content": [
                     {
                         "type": "text",
                         "text": json.dumps(content_list),
@@ -92,4 +131,48 @@ if __name__ == "__main__":
         ],
     )
 
-    print(response.choices[0].message.content)
+    content = json.loads(response.choices[0].message.content[7:-3])
+    print("Initial generation completed successfully.")
+
+    refiner_prompt = """You are a refiner agent that is responsible for refining the descriptions of actions for a virtual assistant.
+    You have a json list of actions that the virtual assistant can take in the following format:
+    [
+        {
+            "index": 0,
+            "description": "the virtual assistant waves at the user",
+            "name": "wave"
+        }
+    ]
+    You should change the text field to be more descriptive of motion and emotion for animating the assistant,
+    e.g. the assistant should nod approvingly with a smile.
+    The other fields should remain the same. You should only return raw json string.
+    """
+
+    refined_response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {
+                "role": "system",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": refiner_prompt
+                    }
+                ]
+            },
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": json.dumps(content["actions"])
+                    }
+                ]
+            }
+        ]
+    )
+    print("Refinement completed successfully.")
+
+    content["actions"] = json.loads(refined_response.choices[0].message.content)
+    with open("response.json", "w") as f:
+        json.dump(content, f)

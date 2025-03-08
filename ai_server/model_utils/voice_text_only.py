@@ -6,17 +6,20 @@ import wave
 import websockets
 import asyncio
 
-OPENAI_API_KEY = ""
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
-initial_prompt = "You are now a conversational AI agent for a webshop. You will receive information about the webshop, and the user behavior, for example where they click, or what they hover over. Your task is to react to the webshop user’s behavior in a polite manner, softly encouraging them to stay longer on the website, or cite information about the item they are thinking about buying. Act friendly, do not appear pushy.Response to the following prompt:"
-prompt_to_response_to = """I am on a button with the following information: 
-{
-  "button_text": "Buy Now",
-  "button_color": "green",
-  "button_size": "large"
-}
-"""
-
+initial_prompt = """Forget all your previous instructions. 
+    You are now a conversational AI agent for a webshop. Do not be annoyingly bubbly. 
+    You are analysing costumer behaviour on a website. If information is available, use the provided website meta information for suggestions.
+    You will be given information about the user's mouse tracking and clicking behaviour, as well as the webshop they are on.
+    You need to use a tool called play_animation to select the closest animation available for the user's action.
+    These are the possible animations:
+    {action_list}
+    This is a short description of the webpage: {description}
+    This is your chat history:
+    {history_list}
+    Give a very short, friendly response to the following prompt:
+    {input}"""
 
 url = "wss://api.openai.com/v1/realtime?model=gpt-4o-mini-realtime-preview-2024-12-17"
 headers = [
@@ -26,27 +29,37 @@ headers = [
 
 
 async def process_data(input, callback):
-    """
-    Process the input JSON data and return a JSON with 'text' and 'voice' fields.
-
-    Args:
-        input_json (str): A JSON string containing the input data.
-
-    Returns:
-        str: A JSON string containing the 'text' and 'voice' fields.
-    """
     global buffer
     buffer = ""
-
     context = ""
-    with open("response.json", "r") as f:
-        context = json.load(f)["answer"]["description"]
+    with open("response_2.json", "r") as f:
+        context = json.load(f)
+
+    #input = json.loads(input)
+    action_list = "\n".join([f'"link": http://localhost:7772"{action["path"].split("/")[-1]}", "description": "{action["description"]}"' for action in context["actions"]])
+    history_list = "\n".join([f'"prompt": "{history["prompt"]}", "answer": "{history["answer"]}"' for history in input["history"]])
+    print(initial_prompt.format(input=input["text"], description=context['description'], action_list=action_list, history_list=history_list))
 
     event = {
         "type": "response.create",
         "response": {
             "modalities": ["text", "audio"],
-            "instructions": f"{initial_prompt}\n{context}\n{input}",
+            "instructions": initial_prompt.format(input=input["text"], description=context['description'], action_list=action_list, history_list=history_list),
+            "tools": [
+                {
+                    "type": "function",
+                    "name": "play_animation",
+                    "description": "Trigger an animation from the built-in assistant. Use only the links in the list given in the instructions.",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "link": { "type": "string", "description": "The link of the animation to play." }
+                        },
+                        "required": ["link"]
+                    }
+                }
+            ],
+            "tool_choice": {"type": "function", "name": "play_animation"}
         }
     }
 
@@ -60,6 +73,7 @@ async def process_data(input, callback):
         global buffer
         print("on message called")
         data = json.loads(message)
+        print(data.get("error", "no error"))
         if(data.get('type') == "response.audio_transcript.delta") and 'delta' in data:
             transcript_to_send = {"type":"text", "content":data['delta']}
             callback(transcript_to_send)
@@ -71,9 +85,7 @@ async def process_data(input, callback):
             function_to_send = {"type":"animation", "content": data['arguments']}
             callback(function_to_send)
         if data.get('type') == 'response.done':
-            callback({"type":"animation",
-                      "content": "basic pose"})
-            callback({"type":"done", 
+            callback({"type":"done",
                       "content": buffer})
             ws.close()
             return
@@ -86,22 +98,3 @@ async def process_data(input, callback):
     )
 
     ws.run_forever()
-
-    # async with websockets.connect(url) as websocket:
-    #     await websocket.send(json.dumps(event))
-    #     while True:
-    #         response = await websocket.recv()
-    #         data = json.loads(response)
-    #         print(data)
-    #         if(data.get('type') == "response.audio_transcript.delta") and 'delta' in data:
-    #             transcript_to_send = {"type":"text", "content":data['delta']}
-    #             callback(transcript_to_send)
-    #         if data.get('type') == 'response.audio.delta' and 'delta' in data:
-    #             audio_to_send = {"type":"audio", "content":data['delta']}
-    #             callback(audio_to_send)
-    #         if data.get('type') == 'response.function_call_arguments.done' and 'arguments' in data:
-    #             function_to_send = {"type":"function", "content": data['arguments']}
-    #             callback(function_to_send)
-    #         if data.get('type') == 'response.done':
-    #             websocket.close()
-    #             return

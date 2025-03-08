@@ -1,0 +1,33 @@
+{
+    "actions": [
+        {
+            "description": "A girl smiling and waving hello to the camera.",
+            "path": "/static/ed5c5d1050364c5293f204581f5d5de7.webp"
+        },
+        {
+            "description": "The girl gives a thumbs down with a disappointed expression.",
+            "path": "/static/6ffe734a8c8048d5bd986e3ee1bfb83c.webp"
+        },
+        {
+            "description": "The girl claps her hands excitedly and nods approvingly.",
+            "path": "/static/2b5bb9fbfc474392b1f6cd984ea2de6d.webp"
+        },
+        {
+            "description": "The girl puts a finger on her chin, looking upwards thoughtfully.",
+            "path": "/static/409fbc49edcc4202aa3e90c79a3c1546.webp"
+        },
+        {
+            "description": "The girl widens her eyes and covers her mouth in surprise.",
+            "path": "/static/5555ad1421f543ad864378b56a30380b.webp"
+        },
+        {
+            "description": "The girl jumps slightly and pumps her fists in celebration.",
+            "path": "/static/15ea1f7a54eb48c4a4114f5c777a9b1e.webp"
+        },
+        {
+            "description": "The girl looks away with a disgusted expression, scrunching her nose.",
+            "path": "/static/1c4ecb92108f438f8da1dc5c024f0aaa.webp"
+        }
+    ],
+    "description": "This is a webshop focused on footwear. Users can see various shoe listings along with product descriptions and prices. Interactive elements include shopping features and options to add items to the cart."
+}

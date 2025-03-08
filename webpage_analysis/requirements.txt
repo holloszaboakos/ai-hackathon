@@ -3,3 +3,4 @@ anthropic
 requests
 webdriver-manager
 openai
+beautifulsoup4

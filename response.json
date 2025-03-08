@@ -1,0 +1,45 @@
+{
+    "actions": [
+        {
+            "index": 3,
+            "text": "the virtual assistant points enthusiastically toward the shop icon while wearing a bright, welcoming smile",
+            "name": "point_and_smile"
+        },
+        {
+            "index": 4,
+            "text": "the virtual assistant gestures animatedly toward the cart icon, their eyes sparkling with excitement",
+            "name": "gesture_cart"
+        },
+        {
+            "index": 5,
+            "text": "the virtual assistant opens their arms wide with a warm, inviting expression, eagerly indicating the shopping section",
+            "name": "welcome_shopping"
+        },
+        {
+            "index": 6,
+            "text": "the virtual assistant taps their chin thoughtfully, their face displaying curiosity as they examine the items closely",
+            "name": "thinking_items"
+        },
+        {
+            "index": 7,
+            "text": "the virtual assistant raises a finger with a friendly expression, as if ready to offer helpful advice on a product",
+            "name": "offer_help"
+        },
+        {
+            "index": 8,
+            "text": "the virtual assistant claps their hands together joyfully, showcasing their enthusiasm for the winter body shoe",
+            "name": "enthusiasm_winter_body"
+        },
+        {
+            "index": 10,
+            "text": "the virtual assistant gives an enthusiastic thumbs up and nods approvingly at the show more options icon, radiating positivity",
+            "name": "thumbs_up"
+        },
+        {
+            "index": 12,
+            "text": "the virtual assistant sweeps their hand gracefully as if inviting the user to add a new item, their expression friendly and encouraging",
+            "name": "invite_add_item"
+        }
+    ],
+    "description": "This is a webshop focused on footwear. Users can see various shoe listings along with product descriptions and prices. Interactive elements include shopping features and options to add items to the cart."
+}
