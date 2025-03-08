@@ -12,12 +12,12 @@ import { playPCM16, sendPrompt } from '../websocketplayer'
 
 const initialState: State = {
     items: [
-        { id: 1, title: 'Winter body', desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Minima, ex.", price: 110, img: Item1 } as ShopItem,
-        { id: 2, title: 'Adidas', desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Minima, ex.", price: 80, img: Item2 } as ShopItem,
-        { id: 3, title: 'Vans', desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Minima, ex.", price: 120, img: Item3 } as ShopItem,
-        { id: 4, title: 'White', desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Minima, ex.", price: 260, img: Item4 } as ShopItem,
-        { id: 5, title: 'Cropped-sho', desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Minima, ex.", price: 160, img: Item5 } as ShopItem,
-        { id: 6, title: 'Blues', desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Minima, ex.", price: 90, img: Item6 } as ShopItem
+        { id: 1, title: 'Winter body', desc: "Nice warm and comfortable winter shoes. If you are the type who likes to drink warm tea in the sofa, this is for you!", price: 110, img: Item1 } as ShopItem,
+        { id: 2, title: 'Adidas', desc: "Strong men need durable sport shoes! This shoe lets you perform at your best!", price: 80, img: Item2 } as ShopItem,
+        { id: 3, title: 'Vans', desc: "The playful checkerboard pattern makes it ideal for teenagers, and people who want to treat their inner child.", price: 120, img: Item3 } as ShopItem,
+        { id: 4, title: 'White', desc: "This modern shoe will make you stand out! The futuristic design and white color makes it ideal for summer.", price: 260, img: Item4 } as ShopItem,
+        { id: 5, title: 'Cropped-sho', desc: "Perfect shoe for big cities. With its elegant minimalist design it can fit into most environments and situations.", price: 160, img: Item5 } as ShopItem,
+        { id: 6, title: 'Blues', desc: "Who has time for the laces! You can just hop in and hop out of these shoes. They are a new trend. Get hip!", price: 90, img: Item6 } as ShopItem
     ],
     addedItems: [],
     total: 0,
