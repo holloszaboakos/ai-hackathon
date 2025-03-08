@@ -7,6 +7,8 @@ import Item6 from '../../images/item6.jpg'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import type { RootState } from '../../store'
 import { toast } from 'react-toastify'
+import { WritableDraft } from 'immer'
+import { playPCM16, sendPrompt } from '../websocketplayer'
 
 const initialState: State = {
     items: [
@@ -42,6 +44,7 @@ export const storeSlice = createSlice({
                 state.addedItems.push({ ...addedItem, quantity: 1 })
                 state.total += addedItem.price
             }
+            sendPrompt("Added new item: " + JSON.stringify(state.addedItems.find(item => action.payload === item.id)))
         },
         removeItem: (state, action: PayloadAction<number>) => {
             let itemToRemove = state.addedItems.find(item => action.payload === item.id)
@@ -67,6 +70,7 @@ export const storeSlice = createSlice({
             addedItem.quantity += 1
             let newTotal = state.total + addedItem.price
             state.total = newTotal
+            sendPrompt("remove item: " + JSON.stringify(addedItem))
         },
         subtractQuantity: (state, action: PayloadAction<number>) => {
             let addedItem = state.addedItems.find(item => item.id === action.payload)
@@ -107,7 +111,4 @@ export const { addToCart, removeItem, addQuantity, subtractQuantity, addShipment
 export const selectCart: (state: RootState) => State = (state: RootState) => state.cart
 
 export default storeSlice.reducer
-function playPCM16(audioSource: string, arg1: number, arg2: number) {
-    throw new Error('Function not implemented.')
-}
 

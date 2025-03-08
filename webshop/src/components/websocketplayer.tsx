@@ -3,8 +3,9 @@ import {
     gotTriplet
 } from "./reducers/cartReducer";
 import { useAppDispatch } from '../hooks'
+import { toast } from 'react-toastify';
 
-function playPCM16(base64String: string, sampleRate = 22000, numChannels = 1) {
+export function playPCM16(base64String: string, sampleRate = 22000, numChannels = 1) {
 
     //console.log('Pb64 audio',base64String);
     let binaryString = atob(base64String);
@@ -37,169 +38,103 @@ function playPCM16(base64String: string, sampleRate = 22000, numChannels = 1) {
 }
 
 
+export function sendPrompt(prompt: string) {        
+    //console.log('Sending prompt:', prompt.length);
+    console.log('Sending prompt:', prompt);
+    const ws = new WebSocket("http://0.0.0.0:8000");
 
-const WebSocketVideoPlayer = ({ url, prompt }: { url: string; prompt: string }) => {
-    const dispatch = useAppDispatch();
-    const videoRef = useRef(null);
-    const audioRef = useRef(null);
-    const imageRef = useRef(null);
-    const textRef = useRef(null);
+    const mediaSource = new MediaSource();
+    console.log(mediaSource);
 
+    //ws.binaryType = 'arraybuffer';
+    var queue: Uint8Array[] = [];
+    var streamingStarted = false;
+    mediaSource.addEventListener('sourceopen', () => {
 
+        const mimeCodec = 'video/mp4; codecs="avc1.42E01E, mp4a.40.2"';
+        if (!MediaSource.isTypeSupported(mimeCodec)) {
+            console.error("MIME type or codec not supported");
+        }
+        const sourceBuffer = mediaSource.addSourceBuffer(mimeCodec);
 
-
-
-    const sendPrompt = (prompt: string) => {
-
-        //console.log('Sending prompt:', prompt.length);
-        console.log('Sending prompt:', prompt);
-        const ws = new WebSocket(url);
-
-        const mediaSource = new MediaSource();
-        console.log(mediaSource);
-
-        mediaSource.addEventListener('sourceopen', () => {
-            console.log('MediaSource opened');
-        });
-        mediaSource.addEventListener('sourceclose', () => {
-            console.log('MediaSource closed');
-        });
-        mediaSource.addEventListener('sourceended', () => {
-            console.log('MediaSource ended');
+        sourceBuffer.addEventListener("onerror", (event) => {
+            console.log("Media source error", event);
         });
 
-        //ws.binaryType = 'arraybuffer';
-        var queue: Uint8Array[] = [];
-        var streamingStarted = false;
-        mediaSource.addEventListener('sourceopen', () => {
-
-            const mimeCodec = 'video/mp4; codecs="avc1.42E01E, mp4a.40.2"';
-            if (!MediaSource.isTypeSupported(mimeCodec)) {
-                console.error("MIME type or codec not supported");
-            }
-            const sourceBuffer = mediaSource.addSourceBuffer(mimeCodec);
-
-            sourceBuffer.addEventListener("onerror", (event) => {
-                console.log("Media source error", event);
-            });
-
-            sourceBuffer.addEventListener('updateend', () => {
-                if (!sourceBuffer.updating && mediaSource.readyState === 'open') {
-                    if (queue.length > 0) {
-                        const data = queue.shift(); // pop from the beginning
-                        console.log('appending from queue, queue length:', queue.length);
-                        sourceBuffer.appendBuffer(data as BufferSource);
-                    } else { // the queue runs empty, so we must force-feed the next packet
-                        streamingStarted = false;
-                    }
-                }
-                else {
-                    console.error('asdf');
-                }
-                mediaSource.endOfStream();
-            });
-
-            function playStreamedAudio(base64: WithImplicitCoercion<string> | { [Symbol.toPrimitive](hint: "string"): string; }) {
-                const data = new Uint8Array(Buffer.from(base64, "base64"));
-
-                console.log("data", data);
-                if (streamingStarted) {
-                    queue.push(data);
-                } else {
-                    console.log('appending received data:', data, sourceBuffer.updating);
-                    streamingStarted = true;
-                    sourceBuffer.appendBuffer(data);
+        sourceBuffer.addEventListener('updateend', () => {
+            if (!sourceBuffer.updating && mediaSource.readyState === 'open') {
+                if (queue.length > 0) {
+                    const data = queue.shift(); // pop from the beginning
+                    console.log('appending from queue, queue length:', queue.length);
+                    sourceBuffer.appendBuffer(data as BufferSource);
+                } else { // the queue runs empty, so we must force-feed the next packet
+                    streamingStarted = false;
                 }
             }
-
-        });
-        var audio_base64 = '';
-        function playAudio(base64: string) {
-            playPCM16(base64, 22000, 1);
-        }
-        var text = '';
-        function displayText(new_text: string) {
-            text = text + new_text;
-            console.log('displaying text:', text);
-        }
-        var image_path = '';
-        function displayImage(_image_path: any) {
-            image_path = _image_path;
-            console.log('displaying image:', image_path);
-        }
-        ws.onmessage = (event) => {
-            const data = JSON.parse(event.data);
-            //console.log("data",data);
-
-            switch (data.type) {
-                case 'audio':
-                    playAudio(data.content);
-                    break;
-                case 'animation':
-                    displayImage(data.content);
-                    break;
-                case 'text':
-                    displayText(data.content);
-                    break;
-                default:
-                    console.error('Unknown data type:', data.type);
+            else {
+                console.error('asdf');
             }
+            mediaSource.endOfStream();
+        });
 
-        };
+        function playStreamedAudio(base64: WithImplicitCoercion<string> | { [Symbol.toPrimitive](hint: "string"): string; }) {
+            const data = new Uint8Array(Buffer.from(base64, "base64"));
 
-        ws.onerror = (error) => console.error('WebSocket Error:', error);
-        ws.onclose = () => {
-            console.log('WebSocket closed');
-            dispatch(gotTriplet({
-                audioSource: audio_base64,
-                text: text,
-                pictureSource: image_path,
-            }));
-        };
- 
-        return () => {
-            //ws.close();
-        };
+            console.log("data", data);
+            if (streamingStarted) {
+                queue.push(data);
+            } else {
+                console.log('appending received data:', data, sourceBuffer.updating);
+                streamingStarted = true;
+                sourceBuffer.appendBuffer(data);
+            }
+        }
+
+    });
+    var audio_base64 = '';
+    function playAudio(base64: string) {
+        playPCM16(base64, 22000, 1);
+    }
+    var text = '';
+    function displayText(new_text:string) {
+        text = text + new_text;
+        console.log('displaying text:', text);
+    }
+    var image_path = '';
+    function displayImage(_image_path: any) {
+        image_path = _image_path;
+        console.log('displaying image:', image_path);
+    }
+    ws.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        //console.log("data",data);
+
+        switch (data.type) {
+            case 'audio':
+                playAudio(data.content);
+                break;
+            case 'animation':
+                displayImage(data.content);
+                break;
+            case 'text':
+                displayText(data.content);
+                break;
+            default:
+                console.error('Unknown data type:', data.type);
+        }
+
     };
 
+    ws.onerror = (error) => console.error('WebSocket Error:', error);
+    ws.onclose = () => {
+        console.log('WebSocket closed'); 
+        playPCM16(audio_base64, 22000, 1);
+        toast(text);
+        toast((t) => (<img className="bottom-right-image" src={image_path} alt="Bottom Right" />))
+    };
 
-    useEffect(() => {
-
-        // Listen for the custom "sendPrompt" event
-        /*
-        const handleSendPrompt = (event) => {
-            console.log('sendPrompt event', event);
-            sendPrompt(event.detail);
-        };
-    
-        window.addEventListener('sendPrompt', handleSendPrompt);
-        */
-        sendPrompt(prompt);
-    }, [prompt]);
-
-    /*
-    return (
-        <video ref={videoRef} controls autoPlay muted>
-            {mediaSource && <source src="sample.mp4" type="video/mp4" />}
-        </video>
-    );
-    */
-    /*
-    const media_url = URL.createObjectURL(mediaSource);
- 
- 
-     return (
-         <><video ref={videoRef} autoPlay controls muted>
-             {<source src={media_url} type="video/mp4" />}
-         </video>
-         <a href={media_url} />"{media_url}"</>
-     );
-     */
-    return (
-        <div>
-            <h1>Player</h1>
-        </div>
-    );
+    return () => {
+        //ws.close();
+    };
 };
 
-export default WebSocketVideoPlayer;
