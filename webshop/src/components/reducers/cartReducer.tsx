@@ -18,7 +18,7 @@ const initialState: State = {
     ],
     addedItems: [],
     total: 0,
-
+    triplet: {} as Triplet
 }
 
 export const storeSlice = createSlice({
@@ -38,7 +38,7 @@ export const storeSlice = createSlice({
                 state.total += addedItem.price
             }
             else {
-                state.addedItems.push({...addedItem, quantity:1})
+                state.addedItems.push({ ...addedItem, quantity: 1 })
                 state.total += addedItem.price
             }
         },
@@ -76,7 +76,7 @@ export const storeSlice = createSlice({
             else if (addedItem.quantity === 1) {
                 let new_items = state.addedItems.filter(item => item.id !== action.payload)
                 let newTotal = state.total - addedItem.price
-                
+
                 state.addedItems = new_items
                 state.total = newTotal
             }
@@ -91,13 +91,24 @@ export const storeSlice = createSlice({
         },
         subtractShipment: (state) => {
             state.total -= 6
+        },
+        gotPictureSource: (state, action: PayloadAction<string>) => {
+            state.triplet.pictureSource = action.payload
+        },
+        gotText: (state, action: PayloadAction<string>) => {
+            state.triplet.text = action.payload
+
+        },
+        gotAudioSource: (state, action: PayloadAction<string>) => {
+            state.triplet.audioSource = action.payload
+
         }
     }
 })
 
-export const { addToCart, removeItem, addQuantity, subtractQuantity, addShipment, subtractShipment } = storeSlice.actions
+export const { addToCart, removeItem, addQuantity, subtractQuantity, addShipment, subtractShipment, gotPictureSource, gotText, gotAudioSource } = storeSlice.actions
 
 // Other code such as selectors can use the imported `RootState` type
-export const selectCart : (state: RootState) => State = (state: RootState) => state.cart
+export const selectCart: (state: RootState) => State = (state: RootState) => state.cart
 
 export default storeSlice.reducer
