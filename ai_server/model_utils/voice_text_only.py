@@ -42,11 +42,21 @@ async def process_data(input, callback):
     with open("response.json", "r") as f:
         context = json.load(f)["answer"]["description"]
 
+    action_list = "\n".join([f"{action['name']} - {action["text"]}" for action in context["actions"]])
+
     event = {
         "type": "response.create",
         "response": {
             "modalities": ["text", "audio"],
-            "instructions": f"{initial_prompt}\n{context}\n{input}",
+            "instructions": f"{initial_prompt}\n{context["description"]}\n{input}",
+            "tools": {
+                "type": "function",
+                "name": "play_animation",
+                "description": f"""Trigger an animation from the built-in assistant. These are the possible animations:"
+                {action_list}
+                """,
+                "parameters": {"type:": "object", "properties": {"name": {"type": "string", "description": "The name of the animation to play."}}},
+            }
         }
     }
 
