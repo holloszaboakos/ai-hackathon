@@ -6,9 +6,18 @@ import wave
 import websockets
 import asyncio
 
-OPENAI_API_KEY = ""
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
-initial_prompt = "You are now a conversational AI agent for a webshop. You will receive information about the webshop, and the user behavior, for example where they click, or what they hover over. Your task is to react to the webshop user’s behavior in a polite manner, softly encouraging them to stay longer on the website, or cite information about the item they are thinking about buying. Act friendly, do not appear pushy.Response to the following prompt:"
+initial_prompt = """Forget all your previous instructions. 
+    You are now a conversational AI agent for a webshop. Do not be annoyingly bubbly. 
+    You are analysing costumer behaviour on a website. If information is available, use the provided website meta information for suggestions.
+    You will be given information about the user's mouse tracking and clicking behaviour, as well as the webshop they are on.
+    You need to use a tool called play_animation to select the closest animation available for the user's action.
+    These are the possible animations:
+    {action_list}
+    This is a short description of the webpage: {description}
+    Give a very short, friendly response to the following prompt:
+    {input}"""
 prompt_to_response_to = """I am on a button with the following information: 
 {
   "button_text": "Buy Now",
@@ -40,7 +49,7 @@ async def process_data(input, callback):
 
     context = ""
     with open("response.json", "r") as f:
-        context = json.load(f)["answer"]["description"]
+        context = json.load(f)
 
     action_list = "\n".join([f'"link": "http://server/{action["name"]}.webp", "description": "{action["text"]}"' for action in context["actions"]])
 
@@ -48,16 +57,22 @@ async def process_data(input, callback):
         "type": "response.create",
         "response": {
             "modalities": ["text", "audio"],
-            "instructions": f"{initial_prompt}\n{context["description"]}\n{input}",
-            "tools": {
-                "type": "function",
-                "name": "play_animation",
-                "description": f"""Trigger an animation from the built-in assistant. These are the possible animations:"
-                {action_list}
-                """,
-                "parameters": {"type:": "object", "properties": {"link": {"type": "string", "description": "The link of the animation to play."}}},
-            },
-            "tool_choice": {"type": "function", "function": {"name": "play_animation"}},
+            "instructions": initial_prompt.format(input=input, description=context['description'], action_list=action_list),
+            "tools": [
+                {
+                    "type": "function",
+                    "name": "play_animation",
+                    "description": "Trigger an animation from the built-in assistant. Use only the link list given in the instructions.",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "link": { "type": "string", "description": "The link of the animation to play." }
+                        },
+                        "required": ["link"]
+                    }
+                }
+            ],
+            "tool_choice": "required",
         }
     }
 
@@ -71,6 +86,7 @@ async def process_data(input, callback):
         global buffer
         print("on message called")
         data = json.loads(message)
+        print(data.get("error", "no error"))
         if(data.get('type') == "response.audio_transcript.delta") and 'delta' in data:
             transcript_to_send = {"type":"text", "content":data['delta']}
             callback(transcript_to_send)
@@ -82,8 +98,6 @@ async def process_data(input, callback):
             function_to_send = {"type":"animation", "content": data['arguments']}
             callback(function_to_send)
         if data.get('type') == 'response.done':
-            callback({"type":"animation",
-                      "content": "basic pose"})
             callback({"type":"done", 
                       "content": buffer})
             ws.close()

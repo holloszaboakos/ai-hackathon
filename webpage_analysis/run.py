@@ -6,6 +6,7 @@ import base64
 from openai import OpenAI
 import json
 import bs4
+import os
 
 def read_webpage(url):
     response = requests.get(url)
@@ -33,7 +34,7 @@ def encode_image(image_path):
     with open(image_path, "rb") as image_file:
         return base64.b64encode(image_file.read()).decode("utf-8")
 
-client = OpenAI(api_key="")
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 webpage_analysis_prompt = """"
 You are an agent analyzing a webpage for a virtual assistant.
