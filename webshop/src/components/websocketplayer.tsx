@@ -4,6 +4,9 @@ import {
 } from "./reducers/cartReducer";
 import { useAppDispatch } from '../hooks'
 import { toast } from 'react-toastify';
+import { json } from 'stream/consumers';
+import { waitFor } from '@testing-library/dom';
+import { wait } from '@testing-library/user-event/dist/utils';
 
 export function playPCM16(base64String: string, sampleRate = 22000, numChannels = 1) {
 
@@ -37,14 +40,26 @@ export function playPCM16(base64String: string, sampleRate = 22000, numChannels 
     console.log('Playing audio');
 }
 
+function getPromiseFromEvent(item:any, event:any) {
+    return new Promise<void>((resolve) => {
+      const listener = () => {
+        item.removeEventListener(event, listener);
+        resolve();
+      }
+      item.addEventListener(event, listener);
+    })
+  }
+  
 
-export function sendPrompt(prompt: string) {        
+
+export async function sendPrompt(prompt: string) {        
     //console.log('Sending prompt:', prompt.length);
     console.log('Sending prompt:', prompt);
-    const ws = new WebSocket("http://0.0.0.0:8000");
+    const ws = new WebSocket("ws://localhost:8000/user_event");
 
     const mediaSource = new MediaSource();
     console.log(mediaSource);
+    console.log('Sending prompt:', prompt);
 
     //ws.binaryType = 'arraybuffer';
     var queue: Uint8Array[] = [];
@@ -105,13 +120,17 @@ export function sendPrompt(prompt: string) {
         image_path = _image_path;
         console.log('displaying image:', image_path);
     }
+    var done = false;
     ws.onmessage = (event) => {
         const data = JSON.parse(event.data);
-        //console.log("data",data);
+        console.log("data",data);
 
         switch (data.type) {
             case 'audio':
+            case 'done':
                 playAudio(data.content);
+                ws.close();
+                done = true;
                 break;
             case 'animation':
                 displayImage(data.content);
@@ -128,13 +147,20 @@ export function sendPrompt(prompt: string) {
     ws.onerror = (error) => console.error('WebSocket Error:', error);
     ws.onclose = () => {
         console.log('WebSocket closed'); 
-        playPCM16(audio_base64, 22000, 1);
+        console.log(text);
+        //playPCM16(audio_base64, 22000, 1);
         toast(text);
         toast((t) => (<img className="bottom-right-image" src={image_path} alt="Bottom Right" />))
     };
 
-    return () => {
-        //ws.close();
-    };
+    async function waitForButtonClick() {
+        await getPromiseFromEvent(ws, "close")
+      }
+
+    const a = JSON.stringify({ text: prompt});
+    console.log('sending:', a);
+    ws.onopen = () => ws.send(a);
+    await waitForButtonClick();
+    return text;
 };
 
