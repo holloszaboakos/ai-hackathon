@@ -134,45 +134,23 @@ if __name__ == "__main__":
     content = json.loads(response.choices[0].message.content[7:-3])
     print("Initial generation completed successfully.")
 
-    refiner_prompt = """You are a refiner agent that is responsible for refining the descriptions of actions for a virtual assistant.
-    You have a json list of actions that the virtual assistant can take in the following format:
-    [
-        {
-            "index": 0,
-            "description": "the virtual assistant waves at the user",
-            "name": "wave"
-        }
-    ]
-    You should change the text field to be more descriptive of motion and emotion for animating the assistant,
-    e.g. the assistant should nod approvingly with a smile.
-    The other fields should remain the same. You should only return raw json string.
-    """
+    assistant_prompt = """
+    This is a very hip and modern assistant that looks like a young anime girl with a ponytail.
+    She is very energetic and friendly and always eager to help.
+    She is very expressive and her movements are always exaggerated.
+    Her webshop has the following description: {description}"""
 
-    refined_response = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[
-            {
-                "role": "system",
-                "content": [
-                    {
-                        "type": "text",
-                        "text": refiner_prompt
-                    }
-                ]
-            },
-            {
-                "role": "user",
-                "content": [
-                    {
-                        "type": "text",
-                        "text": json.dumps(content["actions"])
-                    }
-                ]
-            }
-        ]
-    )
-    print("Refinement completed successfully.")
+    #print(assistant_prompt.format(description=content["description"], actions=json.dumps(content_list)))
 
-    content["actions"] = json.loads(refined_response.choices[0].message.content)
-    with open("response.json", "w") as f:
-        json.dump(content, f)
+    response = requests.get("http://localhost:7773/process", params={"user_request": assistant_prompt.format(description=content["description"])}, timeout=3600)
+    full_content = response.json()
+    #print(full_content)
+    #print(content["description"])
+    #print(json.dumps(content_list))
+    full_content["webpage"] = content["description"]
+    full_content["content_list"] = json.dumps(content_list)
+    print("Assistant response generated successfully.")
+    with open("full_data_new.json", "w") as f:
+        json.dump(full_content, f)
+
+    
