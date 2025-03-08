@@ -101,14 +101,14 @@ async def process_data(input, callback):
             # callback(audio_to_send)
             buffer += data['delta']
         if data.get('type') == 'response.function_call_arguments.done' and 'arguments' in data:
-            function_to_send = {"type":"animation", "content": data['arguments']}
+            function_to_send = {"type":"animation", "content": json.loads(data['arguments'])['link']}
             callback(function_to_send)
         if data.get('type') == 'response.done':
-            callback({"type":"done",
-                      "content": buffer})
             if len(buffer) == 0:
                 ws.send(json.dumps(event))
             else:
+                callback({"type":"done",
+                      "content": buffer})
                 ws.close()
     
     ws = websocket.WebSocketApp(
