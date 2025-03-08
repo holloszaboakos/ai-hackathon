@@ -32,18 +32,23 @@ async def process_data(input, callback):
     global buffer
     buffer = ""
     context = ""
-    in_progress = True
-    with open("response_2.json", "r") as f:
+    voice_mapping={
+        "neutral": "shimmer",
+        "female": "sage",
+        "male": "ash"
+    }
+
+    with open("full_data.json", "r") as f:
         context = json.load(f)
 
     #input = json.loads(input)
-    action_list = "\n".join([f'"link": http://localhost:7772"{action["path"].split("/")[-1]}", "description": "{action["description"]}"' for action in context["actions"]])
+    action_list = "\n".join([f'"link": http://localhost:7772"{action["path"].split("/")[-1]}", "description": "{action["description"]}"' for action in context["anims"]])
     history_list = "\n".join([f'"prompt": "{history["prompt"]}", "answer": "{history["answer"]}"' for history in input["history"]])
-    print(initial_prompt.format(input=input["text"], description=context['description'], action_list=action_list, history_list=history_list))
-
+    
     pre_event = {
         "type": "session.update",
         "session": {
+            "voice": voice_mapping[context["data"]["static_description"]["voice"]],
             "tools": [
                 {
                     "type": "function",
@@ -66,7 +71,7 @@ async def process_data(input, callback):
         "type": "response.create",
         "response": {
             "modalities": ["text", "audio"],
-            "instructions": initial_prompt.format(input=input["text"], description=context['description'], action_list=action_list, history_list=history_list)
+            "instructions": initial_prompt.format(input=input["text"], description=context['webpage'], action_list=action_list, history_list=history_list),
         }
     }
 
@@ -74,7 +79,8 @@ async def process_data(input, callback):
         "type": "response.create",
         "response": {
             "modalities": ["text", "audio"],
-            "instructions": initial_prompt.format(input=input["text"], description=context['description'], action_list=action_list, history_list=history_list),
+            "voice": voice_mapping[context["data"]["static_description"]["voice"]],
+            "instructions": initial_prompt.format(input=input["text"], description=context['webpage'], action_list=action_list, history_list=history_list),
             "tool_choice": "none"
         }
     }
@@ -107,7 +113,7 @@ async def process_data(input, callback):
                 ws.send(json.dumps(event))
             else:
                 callback({"type":"done",
-                        "content": buffer})
+                      "content": buffer})
                 ws.close()
     
     ws = websocket.WebSocketApp(

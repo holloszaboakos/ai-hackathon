@@ -1,0 +1,71 @@
+{
+    "data": {
+        "reasoning": "The AI agent is designed to interact with users in an engaging and approachable manner. The agent will perform various functions such as greeting the user, providing feedback, and expressing emotions that align with user actions or inquiries. The animations should be expressive to clearly convey the agent's emotional responses, whether they are positive, negative, or neutral. This will help in creating a more immersive and interactive experience for the user.",
+        "static_description": {
+            "description": "A slim blonde girl with long hair, wearing a stylish business outfit and high heels. Full body standing photograph with a plain white background, perfect photograph. Top to toe view, facing the camera. Distant, full figure, single person.",
+            "voice": "female"
+        },
+        "animations": [
+            {
+                "description": "A girl smiling and waving hello to the camera.",
+                "prompt": "A slim blonde girl with long hair, smiling brightly and waving her hand softly at the camera. Friendly greeting, single person."
+            },
+            {
+                "description": "The girl gives a thumbs down with a disappointed expression.",
+                "prompt": "A slim blonde girl with long hair, frowning slightly and giving a thumbs down gesture with her right hand. Expressing disapproval, single person."
+            },
+            {
+                "description": "The girl claps her hands excitedly and nods approvingly.",
+                "prompt": "A slim blonde girl with long hair, clapping her hands with enthusiasm and nodding her head with a big approving smile. Positive feedback, single person."
+            },
+            {
+                "description": "The girl puts a finger on her chin, looking upwards thoughtfully.",
+                "prompt": "A slim blonde girl with long hair, placing a finger on her chin and gazing upwards with a thoughtful expression. Contemplative thinking, single person."
+            },
+            {
+                "description": "The girl widens her eyes and covers her mouth in surprise.",
+                "prompt": "A slim blonde girl with long hair, widening her eyes and placing her hand over her mouth in an expression of surprise. Sudden surprise, single person."
+            },
+            {
+                "description": "The girl jumps slightly and pumps her fists in celebration.",
+                "prompt": "A slim blonde girl with long hair, jumping a little and pumping her fists in the air with a joyous expression. Celebrating success, single person."
+            },
+            {
+                "description": "The girl looks away with a disgusted expression, scrunching her nose.",
+                "prompt": "A slim blonde girl with long hair, turning her head slightly away and scrunching her nose in distaste. Expressing disgust, single person."
+            }
+        ]
+    },
+    "anims": [
+        {
+            "description": "A girl smiling and waving hello to the camera.",
+            "path": "/static/ed5c5d1050364c5293f204581f5d5de7.webp"
+        },
+        {
+            "description": "The girl gives a thumbs down with a disappointed expression.",
+            "path": "/static/6ffe734a8c8048d5bd986e3ee1bfb83c.webp"
+        },
+        {
+            "description": "The girl claps her hands excitedly and nods approvingly.",
+            "path": "/static/2b5bb9fbfc474392b1f6cd984ea2de6d.webp"
+        },
+        {
+            "description": "The girl puts a finger on her chin, looking upwards thoughtfully.",
+            "path": "/static/409fbc49edcc4202aa3e90c79a3c1546.webp"
+        },
+        {
+            "description": "The girl widens her eyes and covers her mouth in surprise.",
+            "path": "/static/5555ad1421f543ad864378b56a30380b.webp"
+        },
+        {
+            "description": "The girl jumps slightly and pumps her fists in celebration.",
+            "path": "/static/15ea1f7a54eb48c4a4114f5c777a9b1e.webp"
+        },
+        {
+            "description": "The girl looks away with a disgusted expression, scrunching her nose.",
+            "path": "/static/1c4ecb92108f438f8da1dc5c024f0aaa.webp"
+        }
+    ],
+    "webpage": "This is a webshop focused on footwear. Users can see various shoe listings along with product descriptions and prices. Interactive elements include shopping features and options to add items to the cart."
+
+}
