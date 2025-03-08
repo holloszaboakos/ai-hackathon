@@ -59,6 +59,7 @@ export const storeSlice = createSlice({
 
             state.addedItems = new_items
             state.total = newTotal
+            sendPrompt("removed all of item: " + JSON.stringify(itemToRemove))
         },
         // Use the PayloadAction type to declare the contents of `action.payload`
         addQuantity: (state, action: PayloadAction<number>) => {
@@ -70,7 +71,7 @@ export const storeSlice = createSlice({
             addedItem.quantity += 1
             let newTotal = state.total + addedItem.price
             state.total = newTotal
-            sendPrompt("remove item: " + JSON.stringify(addedItem))
+            sendPrompt("added more of item: " + JSON.stringify(addedItem))
         },
         subtractQuantity: (state, action: PayloadAction<number>) => {
             let addedItem = state.addedItems.find(item => item.id === action.payload)
@@ -90,12 +91,15 @@ export const storeSlice = createSlice({
                 let newTotal = state.total - addedItem.price
                 state.total = newTotal
             }
+            sendPrompt("removed one of item: " + JSON.stringify(addedItem))
         },
         addShipment: (state) => {
             state.total += 6
+            sendPrompt("Requested shipment")
         },
         subtractShipment: (state) => {
             state.total -= 6
+            sendPrompt("Declined shipment")
         },
         gotTriplet: (state, action: PayloadAction<Triplet>) => {
             playPCM16(action.payload.audioSource!!, 22000, 1);
