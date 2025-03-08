@@ -1,11 +1,6 @@
 import os
 import json
-import time
 import websocket
-import base64
-import wave
-import websockets
-import asyncio
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
@@ -43,7 +38,6 @@ async def process_data(input, callback):
     with open("full_data.json", "r") as f:
         context = json.load(f)
 
-    #input = json.loads(input)
     action_list = "\n".join([f'"link": http://localhost:7772/"{action["path"].split("/")[-1]}", "description": "{action["description"]}"' for action in context["anims"]])
     history_list = "\n".join([f'"prompt": "{history["prompt"]}", "answer": "{history["answer"]}"' for history in input["history"]])
     
@@ -117,12 +111,20 @@ async def process_data(input, callback):
                 callback({"type":"done",
                       "content": buffer})
                 ws.close()
+
+    def on_error(ws, error):
+        print(error)
+
+    def on_close(ws, close_status_code, close_msg):
+        print("### closed ###")
     
     ws = websocket.WebSocketApp(
         url,
         header=headers,
         on_open=on_open,
         on_message=on_message,
+        on_error=on_error,
+        on_close=on_close
     )
 
     ws.run_forever()
