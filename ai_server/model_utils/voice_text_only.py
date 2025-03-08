@@ -7,7 +7,6 @@ import websockets
 import asyncio
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-
 initial_prompt = """Forget all your previous instructions. 
     You are now a conversational AI agent for a webshop. Do not be annoyingly bubbly. 
     You are analysing costumer behaviour on a website. If information is available, use the provided website meta information for suggestions.

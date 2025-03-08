@@ -44,3 +44,7 @@
   width: 100px; /* Adjust the size as needed */
   height: auto;
 }
+
+.toast-image{
+object-fit: cover;
+}

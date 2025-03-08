@@ -41,18 +41,19 @@ export function playPCM16(base64String: string, sampleRate = 22000, numChannels 
     console.log('Playing audio');
 }
 
-function getPromiseFromEvent(item:any, event:any) {
+function getPromiseFromEvent(item: any, event: any) {
     return new Promise<void>((resolve) => {
-      const listener = () => {
-        item.removeEventListener(event, listener);
-        resolve();
-      }
-      item.addEventListener(event, listener);
+        const listener = () => {
+            item.removeEventListener(event, listener);
+            resolve();
+        }
+        item.addEventListener(event, listener);
     })
   }
   
 var promptList: Array<string> = [];
 var history: Array<{prompt: string, answer: string}> = [];
+
 
 export async function sendPrompt(prompt: string) {
     //console.log('Sending prompt:', prompt.length);
@@ -63,7 +64,7 @@ export async function sendPrompt(prompt: string) {
         playPCM16(base64, 22000, 1);
     }
     var text = '';
-    function displayText(new_text:string) {
+    function displayText(new_text: string) {
         text = text + new_text;
         console.log('displaying text:', text);
     }
@@ -75,7 +76,7 @@ export async function sendPrompt(prompt: string) {
     var done = false;
     ws.onmessage = (event) => {
         const data = JSON.parse(event.data);
-        console.log("data",data);
+        console.log("data", data);
 
         switch (data.type) {
             case 'audio':
@@ -98,19 +99,25 @@ export async function sendPrompt(prompt: string) {
 
     ws.onerror = (error) => console.error('WebSocket Error:', error);
     ws.onclose = () => {
-        console.log('WebSocket closed'); 
+        console.log('WebSocket closed');
         console.log(text);
         //playPCM16(audio_base64, 22000, 1);
         history.push({prompt: prompt, answer: text});
         toast(text);
-        toast((t) => (<img className="bottom-right-image" src={image_path} alt="Bottom Right" />))
+        toast((t) => (<img
+            className="toast-image"
+            width={280}
+            src={image_path}
+            alt={image_path} />
+        ))
     };
 
     async function waitForButtonClick() {
         await getPromiseFromEvent(ws, "close")
-      }
+    }
 
     const a = JSON.stringify({ text: prompt, history: history });
+
     console.log('sending:', a);
     ws.onopen = () => ws.send(a);
     await waitForButtonClick();
