@@ -42,7 +42,7 @@ async def process_data(input, callback):
         context = json.load(f)
 
     #input = json.loads(input)
-    action_list = "\n".join([f'"link": http://localhost:7772"{action["path"].split("/")[-1]}", "description": "{action["description"]}"' for action in context["anims"]])
+    action_list = "\n".join([f'"link": http://localhost:7772/"{action["path"].split("/")[-1]}", "description": "{action["description"]}"' for action in context["anims"]])
     history_list = "\n".join([f'"prompt": "{history["prompt"]}", "answer": "{history["answer"]}"' for history in input["history"]])
     
     pre_event = {
