@@ -36,3 +36,11 @@
     transform: rotate(360deg);
   }
 }
+
+.bottom-right-image {
+  position: float;
+  bottom: 0;
+  right: 0;
+  width: 100px; /* Adjust the size as needed */
+  height: auto;
+}
