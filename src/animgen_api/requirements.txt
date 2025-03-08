@@ -1,0 +1,9 @@
+FastAPI
+uvicorn
+pydantic
+numpy
+pandas
+requests
+tqdm
+Pillow
+openai
