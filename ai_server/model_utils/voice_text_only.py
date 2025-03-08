@@ -33,6 +33,7 @@ async def process_data(input, callback):
     global buffer
     buffer = ""
     context = ""
+    in_progress = True
     with open("response_2.json", "r") as f:
         context = json.load(f)
 
@@ -62,33 +63,28 @@ async def process_data(input, callback):
         }
     }
 
+    func_event = {
+        "type": "response.create",
+        "response": {
+            "modalities": ["text", "audio"],
+            "instructions": initial_prompt.format(input=input["text"], description=context['description'], action_list=action_list, history_list=history_list)
+        }
+    }
+
     event = {
         "type": "response.create",
         "response": {
             "modalities": ["text", "audio"],
             "instructions": initial_prompt.format(input=input["text"], description=context['description'], action_list=action_list, history_list=history_list),
-            "tools": [
-                {
-                    "type": "function",
-                    "name": "play_animation",
-                    "description": "Trigger an animation from the built-in assistant. Use only the links in the list given in the instructions.",
-                    "parameters": {
-                        "type": "object",
-                        "properties": {
-                            "link": { "type": "string", "description": "The link of the animation to play." }
-                        },
-                        "required": ["link"]
-                    }
-                }
-            ],
-            "tool_choice": "required"
+            "tool_choice": "none"
         }
     }
 
     def on_open(ws):
         print("Connected to server.")
         ws.send(json.dumps(pre_event))
-        ws.send(json.dumps(event))
+        ws.send(json.dumps(func_event))
+
 
     # Receiving messages will require parsing message payloads
     # from JSON
@@ -110,8 +106,10 @@ async def process_data(input, callback):
         if data.get('type') == 'response.done':
             callback({"type":"done",
                       "content": buffer})
-            ws.close()
-            return
+            if len(buffer) == 0:
+                ws.send(json.dumps(event))
+            else:
+                ws.close()
     
     ws = websocket.WebSocketApp(
         url,
